@@ -34,17 +34,29 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> _loadInitialData() async {
+    if (!mounted) return;
     setState(() => _isLoading = true);
+    
     try {
       final prefs = await SharedPreferences.getInstance();
-      nameController.text = (prefs.getString('user_name') ?? '').trim();
-      emailController.text = (prefs.getString('user_email') ?? '').trim();
-      numberController.text = (prefs.getString('user_mobile') ?? '').trim();
-      profileImg = prefs.getString('profile_img') ?? '';
+      // Load local content first to be fast
+      final localName = prefs.getString('user_name');
+      final localEmail = prefs.getString('user_email');
+      final localMobile = prefs.getString('user_mobile');
+      final localImg = prefs.getString('profile_img');
 
-      // Fetch fresh data
+      if (localName != null) nameController.text = localName;
+      if (localEmail != null) emailController.text = localEmail;
+      if (localMobile != null) numberController.text = localMobile;
+      
+      setState(() {
+        profileImg = localImg;
+      });
+
+      // Fetch fresh data from server
       final res = await ApiService.post(
           endpoint: 'get_geo_quiz_profile', withAuth: true);
+          
       if (res.statusCode == 200) {
         final decoded = ApiService.decodeResponse(res);
         if (decoded is Map && decoded['data'] != null) {
@@ -52,12 +64,34 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           
           if (mounted) {
             setState(() {
+              // Ensure we don't overwrite user edits if they started typing (though unrelated here since we just loaded)
+              // But for "auto-fill" we want to enforce server data
               nameController.text = data['name'] ?? nameController.text;
               emailController.text = data['email'] ?? emailController.text;
               numberController.text = data['mobile'] ?? numberController.text;
-              profileImg = data['profile_img'] ?? profileImg;
+              
+              // Add timestamp to bust cache if it's the same URL
+              String? newImg = data['profile_img'];
+              if (newImg != null && newImg.isNotEmpty) {
+                 if (!newImg.contains('?')) {
+                   newImg = "$newImg?t=${DateTime.now().millisecondsSinceEpoch}";
+                 } else {
+                   newImg = "$newImg&t=${DateTime.now().millisecondsSinceEpoch}";
+                 }
+              }
+              profileImg = newImg ?? profileImg;
               userId = data['id']?.toString();
             });
+            
+            // Sync fresh data to prefs
+            await prefs.setString('user_name', nameController.text);
+            await prefs.setString('user_email', emailController.text);
+            await prefs.setString('user_mobile', numberController.text);
+            if (profileImg != null) {
+               // Store the raw URL without timestamp in prefs usually, but for display we need bust. 
+               // Let's just store what we got.
+               await prefs.setString('profile_img', data['profile_img'] ?? '');
+            }
           }
         }
       }
@@ -67,6 +101,127 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       if (mounted) setState(() => _isLoading = false);
     }
   }
+
+  // ... (build method, etc.)
+
+  void _showImagePickerSheet() {
+    showModalBottomSheet(
+      backgroundColor: Colors.transparent,
+      context: context,
+      builder: (context) => Container(
+        margin: const EdgeInsets.all(fixPadding),
+        decoration: BoxDecoration(
+          color: whiteColor,
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(fixPadding * 2.0),
+              child: Text(
+                getTranslation(context, 'edit_profile.change_profile_photo'),
+                style: semibold18BlackText,
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildOptionEvent(
+                  const Color(0xFF1E4799),
+                  Icons.camera_alt,
+                  getTranslation(context, 'edit_profile.camera'),
+                  ImageSource.camera,
+                ),
+                _buildOptionEvent(
+                  Colors.green,
+                  Icons.photo_library,
+                  getTranslation(context, 'edit_profile.gallery'),
+                  ImageSource.gallery,
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOptionEvent(
+      Color color, IconData icon, String title, ImageSource source) {
+    return InkWell(
+      onTap: () {
+        Navigator.pop(context);
+        _pickImage(source);
+      },
+      child: Column(
+        children: [
+          Container(
+            height: 50,
+            width: 50,
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: color, size: 24),
+          ),
+          const SizedBox(height: 8),
+          Text(title, style: medium14BlackText),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      final XFile? image = await _picker.pickImage(source: source);
+      if (image != null) {
+        await _uploadImage(image.path);
+      }
+    } catch (e) {
+      print("Image picking error: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Failed to pick image")),
+      );
+    }
+  }
+
+  Future<void> _uploadImage(String filePath) async {
+    setState(() => _isSaving = true);
+    try {
+      final res = await ApiService.postMultipart(
+        endpoint: 'upload_profile_image',
+        filePath: filePath,
+        withAuth: true,
+      );
+
+      final decoded = ApiService.decodeResponse(res);
+      if (res.statusCode == 200 && decoded['error'] == false) {
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Profile image updated!"), backgroundColor: Colors.green),
+        );
+        
+        // Reload data to get the new image URL and refresh UI
+        // This will now apply the cache-busting timestamp
+        await _loadInitialData();
+        
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+           SnackBar(content: Text(getApiMessage(decoded)), backgroundColor: Colors.red),
+        );
+      }
+    } catch (e) {
+      print("Upload error: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Failed to upload image"), backgroundColor: Colors.red),
+      );
+    } finally {
+      if (mounted) setState(() => _isSaving = false);
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -306,117 +461,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
   }
 
-  void _showImagePickerSheet() {
-    showModalBottomSheet(
-      backgroundColor: Colors.transparent,
-      context: context,
-      builder: (context) => Container(
-        margin: const EdgeInsets.all(fixPadding),
-        decoration: BoxDecoration(
-          color: whiteColor,
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(fixPadding * 2.0),
-              child: Text(
-                getTranslation(context, 'edit_profile.change_profile_photo'),
-                style: semibold18BlackText,
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildOptionEvent(
-                  const Color(0xFF1E4799),
-                  Icons.camera_alt,
-                  getTranslation(context, 'edit_profile.camera'),
-                  ImageSource.camera,
-                ),
-                _buildOptionEvent(
-                  Colors.green,
-                  Icons.photo_library,
-                  getTranslation(context, 'edit_profile.gallery'),
-                  ImageSource.gallery,
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-          ],
-        ),
-      ),
-    );
-  }
+  // Helpers located below build method
+  // ...
 
-  Widget _buildOptionEvent(
-      Color color, IconData icon, String title, ImageSource source) {
-    return InkWell(
-      onTap: () {
-        Navigator.pop(context);
-        _pickImage(source);
-      },
-      child: Column(
-        children: [
-          Container(
-            height: 50,
-            width: 50,
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, color: color, size: 24),
-          ),
-          const SizedBox(height: 8),
-          Text(title, style: medium14BlackText),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _pickImage(ImageSource source) async {
-    try {
-      final XFile? image = await _picker.pickImage(source: source);
-      if (image != null) {
-        await _uploadImage(image.path);
-      }
-    } catch (e) {
-      print("Image picking error: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Failed to pick image")),
-      );
-    }
-  }
-
-  Future<void> _uploadImage(String filePath) async {
-    setState(() => _isSaving = true);
-    try {
-      final res = await ApiService.postMultipart(
-        endpoint: 'upload_profile_image',
-        filePath: filePath,
-        withAuth: true,
-      );
-
-      final decoded = ApiService.decodeResponse(res);
-      if (res.statusCode == 200 && decoded['error'] == false) {
-        // Refresh profile to get new image URL
-        _loadInitialData(); 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Profile image updated!"), backgroundColor: Colors.green),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-           SnackBar(content: Text(getApiMessage(decoded)), backgroundColor: Colors.red),
-        );
-      }
-    } catch (e) {
-      print("Upload error: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Failed to upload image"), backgroundColor: Colors.red),
-      );
-    } finally {
-      setState(() => _isSaving = false);
-    }
-  }
 }
