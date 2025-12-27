@@ -1,0 +1,251 @@
+{
+    "app_exit": {
+        "exit_text": "再次向后退出"
+    },
+    "add_money": {
+        "add_money": "加钱",
+        "add": "添加",
+        "enter_amount": "输入金额",
+        "amount": "数量"
+    },
+    "login": {
+        "login": "登录",
+        "text1": "通过继续，您同意",
+        "text2": "附带条约",
+        "text3": "城市骑手",
+        "ride_text": "与城市骑手一起骑",
+        "welcome_text": "欢迎回来，请登录您的帐户",
+        "mobile_number": "手机号码",
+        "enter_number": "输入你的手机号码"
+    },
+    "otp": {
+        "didn't_text": "没有得到OTP吗？",
+        "resend_OTP": "重新发出OTP",
+        "verify": "核实",
+        "please_wait": "请稍等",
+        "OTP_verification": "OTP验证",
+        "confirm_text": "确认代码已发送给您的手机号码+91 1234567890"
+    },
+    "register": {
+        "register": "登记",
+        "mobile_number": "手机号码",
+        "enter_number": "输入你的手机号码",
+        "email_address": "电子邮件地址",
+        "enter_email": "输入你的电子邮箱地址",
+        "name": "姓名",
+        "enter_name": "输入你的名字",
+        "welcome_text": "欢迎回来，请创建您的帐户",
+        "ride_text": "与城市骑手一起骑"
+    },
+    "confirm": {
+        "ride_time": "骑行时间",
+        "pause_time": "暂停时间",
+        "travelled": "旅行",
+        "give_rate": "给出费率",
+        "please_text": "请给予费用并与我们分享您的旅程的经验",
+        "submit": "提交",
+        "cancel": "取消",
+        "share_experience": "你的骑车怎么样？\n 与我们分享您的经验",
+        "fixed_rent": "固定租金",
+        "ride_fare": "公里乘车票价",
+        "pause_fare": "暂停危险",
+        "paid_wallet": "从钱包付款",
+        "pick_location": "接人的地方",
+        "drop_location": "放置位置",
+        "calorie_burned": "卡路里燃烧了",
+        "ride_ended": "骑行结束了"
+    },
+    "credit_card": {
+        "enter_details": "输入您的卡详细信息",
+        "credit_card": "信用卡",
+        "enter_holde_name": "输入卡持有人名称",
+        "name_card": "卡片上的名字",
+        "enter_number": "输入卡号",
+        "card_number": "卡号",
+        "expire_date": "到期日期"
+    },
+    "detail": {
+        "ready_go": "准备好出发",
+        "rent": "租",
+        "parking_rules": "停车规则",
+        "get_direction": "得到指引",
+        "unlock_now": "现在解锁",
+        "park_in_cityzone": "公园在城市骑手区",
+        "do_not_park": "不要停在私人区域",
+        "fixed_rent": "固定租金",
+        "per_km": "由KM",
+        "pause_min": "暂停/分钟",
+        "battery_level": "电池水平",
+        "range_upto": "范围为"
+    },
+    "end_ride": {
+        "end_ride": "结束骑行",
+        "drop_point": "在最近的点",
+        "make_sure_text": "*确保您仅在城市骑手区停车",
+        "back": "后退",
+        "confirm": "确认"
+    },
+    "home": {
+        "where_to_go": "你想去哪里？",
+        "scooters_available": "踏板车可用",
+        "battery": "电池",
+        "range": "范围",
+        "go_detail": "去细节"
+    },
+    "notification": {
+        "no_notification": "没有新的通知",
+        "removed_notification": "从通知中删除",
+        "ago": "前"
+    },
+    "onboarding": {
+        "find_destination": "找到您的目的地",
+        "scan_code": "扫描二维码",
+        "start_ride": "开始骑行",
+        "skip": "跳过",
+        "login": "登录",
+        "next": "下一个"
+    },
+    "app_settings": {
+        "app_settings": "应用设置",
+        "dark_mode": "黑暗模式",
+        "policy_community": "政策与社区",
+        "application_update": "应用程序更新",
+        "allow_notification": "允许通知"
+    },
+    "edit_profile": {
+        "edit_profile": "编辑个人资料",
+        "update": "更新",
+        "email_address": "电子邮件地址",
+        "enter_email": "请输入电邮地址",
+        "mobile_number": "手机号码",
+        "enter_number": "输入手机号码",
+        "name": "姓名",
+        "enter_name": "输入你的名字",
+        "change_profile_photo": "更改个人资料照片",
+        "camera": "相机",
+        "gallery": "画廊",
+        "remove": "消除"
+    },
+    "faqs": {
+        "faqs": "常见问题解答"
+    },
+    "help": {
+        "help_support": "帮助支持",
+        "submit": "提交",
+        "message": "信息",
+        "write_here": "在这里写消息",
+        "email_address": "电子邮件地址",
+        "enter_email": "输入你的电子邮箱地址",
+        "name": "姓名",
+        "enter_name": "输入你的名字"
+    },
+    "language": {
+        "language": "语言",
+        "update": "更新"
+    },
+    "privacy_policy": {
+        "privacy_policy": "隐私政策",
+        "introduction": "介绍"
+    },
+    "profile": {
+        "profile": "轮廓",
+        "ride_history": "骑历史",
+        "refer_earn": "参考并赚钱",
+        "language": "语言",
+        "app_settings": "应用设置",
+        "FAQs": "常见问题解答",
+        "privacy_policy": "隐私政策",
+        "terms_condition": "附带条约",
+        "help_support": "帮助支持",
+        "logout_text": "您确定要注销吗？",
+        "cancel": "取消",
+        "logout": "登出",
+        "ride_taken": "骑行",
+        "ride": "骑",
+        "distance": "距离",
+        "calories": "卡路里"
+    },
+    "refer_and_earn": {
+        "refer_and_earn": "参考并赚钱",
+        "content_text": "分享此链接到您的朋友，他们登录并预订第一次骑行后，您将获得30美元。",
+        "text": "参考并最多赚30美元",
+        "share_via": "通过"
+    },
+    "ride_history": {
+        "ride_history": "骑历史",
+        "give_rate": "给出费率",
+        "please_text": "请给予费用并与我们分享您的旅程的经验",
+        "submit": "提交",
+        "cancel": "取消"
+    },
+    "terms_and_condition": {
+        "terms_and_condition": "附带条约"
+    },
+    "receipt": {
+        "ride_start_location": "乘坐开始位置",
+        "ride_end_location": "骑行最终位置",
+        "purpose": "目的",
+        "payment_method": "付款方式",
+        "payment_date": "付款日期",
+        "payment_time": "付款时间",
+        "cycle_no": "循环编号",
+        "receipt_no": "收据",
+        "name": "姓名",
+        "ride_time": "骑行时间",
+        "need_more_help": "需要更多帮助吗？",
+        "contact_us": "联系我们",
+        "you_paid": "你有报酬"
+    },
+    "scan": {
+        "enter_code_manually": "手动输入代码",
+        "having_issue": "有问题？",
+        "scan_unlock": "扫描解锁",
+        "scan_code_text": "扫描QR码，您会发现周期的后面"
+    },
+    "search": {
+        "type_search": "类型要搜索",
+        "recently_searched": "最近搜索",
+        "use_current_location": "使用我当前的位置"
+    },
+    "search_result": {
+        "go_detail": "去细节",
+        "battery": "电池",
+        "range": "范围",
+        "scooters_available": "踏板车可用"
+    },
+    "security_deposite": {
+        "later": "之后",
+        "security_deposit": "保证金",
+        "content_text": "仅用于付款安全，随时可以全额退还",
+        "pay_now": "现在付款"
+    },
+    "start_ride": {
+        "range": "范围",
+        "battery_level": "电池水平",
+        "time_used": "时间使用的时间",
+        "travelled": "旅行",
+        "ride_paused": "骑车停了下来",
+        "no_cost_till": "直到1分钟才无需费用。然后$ 0.10/min",
+        "paused_time": "暂停时间",
+        "resume": "恢复",
+        "pause": "暂停",
+        "end_ride": "结束骑行"
+    },
+    "success": {
+        "enjoy_text": "享受你的旅程！",
+        "your_successfully_unlock": "您的自行车成功解锁",
+        "start_ride": "开始骑行"
+    },
+    "wallet": {
+        "wallet": "钱包",
+        "recent_transaction": "最近的交易",
+        "available_balance": "可用余额",
+        "add_money": "加钱"
+    },
+    "wallet_success": {
+        "back_home": "回到家",
+        "congratulation": "恭喜，您的钱在钱包中成功添加了",
+        "added": "添加",
+        "contact_us": "有问题？联系我们"
+    }
+}

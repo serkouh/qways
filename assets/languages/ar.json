@@ -1,0 +1,251 @@
+{
+    "app_exit": {
+        "exit_text": "اضغط مرة أخرى للخروج"
+    },
+    "add_money": {
+        "add_money": "إضافة المال",
+        "add": "يضيف",
+        "enter_amount": "أدخل المبلغ",
+        "amount": "كمية"
+    },
+    "login": {
+        "login": "تسجيل الدخول",
+        "text1": "من خلال الاستمرار ، توافق على",
+        "text2": "أحكام وشروط",
+        "text3": "من راكب المدينة",
+        "ride_text": "ركوب مع راكب المدينة",
+        "welcome_text": "مرحبًا بك مرة أخرى ، يرجى تسجيل الدخول إلى حسابك",
+        "mobile_number": "رقم الهاتف المحمول",
+        "enter_number": "أدخل رقم هاتفك المحمول"
+    },
+    "otp": {
+        "didn't_text": "لم تحصل على OTP؟",
+        "resend_OTP": "إعادة إرسال OTP",
+        "verify": "يؤكد",
+        "please_wait": "انتظر من فضلك",
+        "OTP_verification": "التحقق من OTP",
+        "confirm_text": "تم إرسال رمز التأكيد إليك على رقم هاتفك المحمول +91 1234567890"
+    },
+    "register": {
+        "register": "يسجل",
+        "mobile_number": "رقم الهاتف المحمول",
+        "enter_number": "أدخل رقم هاتفك المحمول",
+        "email_address": "عنوان البريد الإلكتروني",
+        "enter_email": "أدخل عنوان بريدك الالكتروني",
+        "name": "اسم",
+        "enter_name": "أدخل أسمك",
+        "welcome_text": "مرحبًا بك مرة أخرى ، يرجى إنشاء حسابك",
+        "ride_text": "ركوب مع راكب المدينة"
+    },
+    "confirm": {
+        "ride_time": "الوقت ركوب",
+        "pause_time": "وقفة الوقت",
+        "travelled": "سافرت",
+        "give_rate": "إعطاء معدل",
+        "please_text": "يرجى إعطاء معدل ومشاركة تجربة رحلتك معنا",
+        "submit": "يُقدِّم",
+        "cancel": "يلغي",
+        "share_experience": "كيف كانت رحلتك؟ \n شارك تجربتك معنا",
+        "fixed_rent": "إيجار ثابت",
+        "ride_fare": "كيلومتر ركوب الأجرة",
+        "pause_fare": "وقفة الخطر",
+        "paid_wallet": "مدفوع من محفظة",
+        "pick_location": "اختر موقعا",
+        "drop_location": "إسقاط الموقع",
+        "calorie_burned": "احترقت السعرات الحرارية",
+        "ride_ended": "انتهى الركوب"
+    },
+    "credit_card": {
+        "enter_details": "أدخل تفاصيل بطاقتك",
+        "credit_card": "بطاقة إئتمان",
+        "enter_holde_name": "أدخل اسم حامل البطاقة",
+        "name_card": "الاسم على البطاقة",
+        "enter_number": "أدخل رقم البطاقة",
+        "card_number": "رقم البطاقة",
+        "expire_date": "تاريخ انتهاء الصلاحية"
+    },
+    "detail": {
+        "ready_go": "جاهز للذهاب",
+        "rent": "إيجار",
+        "parking_rules": "قواعد وقوف السيارات",
+        "get_direction": "احصل على اتجاه",
+        "unlock_now": "افتح الآن",
+        "park_in_cityzone": "بارك في منطقة رايدر",
+        "do_not_park": "لا تقف في المنطقة الخاصة",
+        "fixed_rent": "إيجار ثابت",
+        "per_km": "بواسطة KM",
+        "pause_min": "وقفة/دقيقة",
+        "battery_level": "مستوى البطارية",
+        "range_upto": "المدى حتى"
+    },
+    "end_ride": {
+        "end_ride": "رحلة نهاية",
+        "drop_point": "إسقاط في أقرب نقطة",
+        "make_sure_text": "*تأكد من الوقوف في منطقة رايدر فقط",
+        "back": "خلف",
+        "confirm": "يتأكد"
+    },
+    "home": {
+        "where_to_go": "أين تريد أن تذهب؟",
+        "scooters_available": "الدراجات البخارية المتاحة",
+        "battery": "بطارية",
+        "range": "يتراوح",
+        "go_detail": "اذهب التفاصيل"
+    },
+    "notification": {
+        "no_notification": "لا يوجد إشعار جديد",
+        "removed_notification": "تمت إزالته من الإخطار",
+        "ago": "منذ"
+    },
+    "onboarding": {
+        "find_destination": "ابحث عن وجهتك",
+        "scan_code": "مسح رمز الاستجابة السريعة",
+        "start_ride": "ابدأ رحلتك",
+        "skip": "يتخطى",
+        "login": "تسجيل الدخول",
+        "next": "التالي"
+    },
+    "app_settings": {
+        "app_settings": "إعدادات التطبيقات",
+        "dark_mode": "الوضع المظلم",
+        "policy_community": "السياسة والمجتمع",
+        "application_update": "تحديث التطبيق",
+        "allow_notification": "السماح للإشعار"
+    },
+    "edit_profile": {
+        "edit_profile": "تعديل الملف الشخصي",
+        "update": "تحديث",
+        "email_address": "عنوان البريد الإلكتروني",
+        "enter_email": "أدخل عنوان البريد الالكتروني",
+        "mobile_number": "رقم الهاتف المحمول",
+        "enter_number": "أدخل رقم الهاتف المحمول",
+        "name": "اسم",
+        "enter_name": "أدخل أسمك",
+        "change_profile_photo": "تغيير صورة الملف الشخصي",
+        "camera": "آلة تصوير",
+        "gallery": "صالة عرض",
+        "remove": "يزيل"
+    },
+    "faqs": {
+        "faqs": "الأسئلة الشائعة"
+    },
+    "help": {
+        "help_support": "ساعد لدعم",
+        "submit": "يُقدِّم",
+        "message": "رسالة",
+        "write_here": "اكتب رسالة هنا",
+        "email_address": "عنوان البريد الإلكتروني",
+        "enter_email": "أدخل عنوان بريدك الالكتروني",
+        "name": "اسم",
+        "enter_name": "أدخل أسمك"
+    },
+    "language": {
+        "language": "لغة",
+        "update": "تحديث"
+    },
+    "privacy_policy": {
+        "privacy_policy": "سياسة الخصوصية",
+        "introduction": "مقدمة"
+    },
+    "profile": {
+        "profile": "حساب تعريفي",
+        "ride_history": "ركوب التاريخ",
+        "refer_earn": "الرجوع والكسب",
+        "language": "لغة",
+        "app_settings": "إعدادات التطبيقات",
+        "FAQs": "الأسئلة الشائعة",
+        "privacy_policy": "سياسة الخصوصية",
+        "terms_condition": "أحكام وشروط",
+        "help_support": "ساعد لدعم",
+        "logout_text": "هل أنت متأكد أنك تريد تسجيل الخروج؟",
+        "cancel": "يلغي",
+        "logout": "تسجيل خروج",
+        "ride_taken": "ركوب",
+        "ride": "يركب",
+        "distance": "مسافة",
+        "calories": "سعرات حرارية"
+    },
+    "refer_and_earn": {
+        "refer_and_earn": "الرجوع والكسب",
+        "content_text": "شارك هذا الرابط إلى أصدقائك ، بعد تسجيل الدخول وحجز أول رحلة ستحصل على 30 دولارًا.",
+        "text": "الرجوع وكسب ما يصل إلى 30 دولار",
+        "share_via": "شارك الرابط عبر"
+    },
+    "ride_history": {
+        "ride_history": "ركوب التاريخ",
+        "give_rate": "إعطاء معدل",
+        "please_text": "يرجى إعطاء معدل ومشاركة تجربة رحلتك معنا",
+        "submit": "يُقدِّم",
+        "cancel": "يلغي"
+    },
+    "terms_and_condition": {
+        "terms_and_condition": "أحكام وشروط"
+    },
+    "receipt": {
+        "ride_start_location": "ركوب موقع بدء",
+        "ride_end_location": "ركوب موقع نهاية",
+        "purpose": "غاية",
+        "payment_method": "طريقة الدفع او السداد",
+        "payment_date": "تاريخ الدفع",
+        "payment_time": "وقت الدفع",
+        "cycle_no": "دورة لا",
+        "receipt_no": "رقم الإيصال",
+        "name": "اسم",
+        "ride_time": "الوقت ركوب",
+        "need_more_help": "هل تريد المزيد من المساعدة؟",
+        "contact_us": "اتصل بنا",
+        "you_paid": "أنت رواتب"
+    },
+    "scan": {
+        "enter_code_manually": "إدخال رمز يدويا",
+        "having_issue": "وجود مشكلة؟",
+        "scan_unlock": "فحص لفتح",
+        "scan_code_text": "مسح رمز الاستجابة السريعة التي ستجدها مرة أخرى"
+    },
+    "search": {
+        "type_search": "اكتب للبحث",
+        "recently_searched": "تم تفتيشه مؤخرًا",
+        "use_current_location": "استخدم موقعي الحالي"
+    },
+    "search_result": {
+        "go_detail": "اذهب التفاصيل",
+        "battery": "بطارية",
+        "range": "يتراوح",
+        "scooters_available": "الدراجات البخارية المتاحة"
+    },
+    "security_deposite": {
+        "later": "لاحقاً",
+        "security_deposit": "مبلغ التأمين",
+        "content_text": "إنه لأمن الدفع فقط ، سيكون قابلاً للاسترداد بالكامل وقتما تشاء",
+        "pay_now": "ادفع الآن"
+    },
+    "start_ride": {
+        "range": "يتراوح",
+        "battery_level": "مستوى البطارية",
+        "time_used": "الوقت المستخدم",
+        "travelled": "سافرت",
+        "ride_paused": "ركوب توقف مؤقتا",
+        "no_cost_till": "لا تكلفة حتى 1 دقيقة.ثم 0.10 دولار/دقيقة",
+        "paused_time": "توقف الوقت",
+        "resume": "سيرة ذاتية",
+        "pause": "يوقف",
+        "end_ride": "رحلة نهاية"
+    },
+    "success": {
+        "enjoy_text": "استمتع برحلتك!",
+        "your_successfully_unlock": "دراجتك تفتح بنجاح",
+        "start_ride": "ابدأ الركوب"
+    },
+    "wallet": {
+        "wallet": "محفظة",
+        "recent_transaction": "المعاملة الأخيرة",
+        "available_balance": "الرصيد المتوفر",
+        "add_money": "إضافة المال"
+    },
+    "wallet_success": {
+        "back_home": "العودة إلى المنزل",
+        "congratulation": "تهنئة ، أضاف أموالك بنجاح في المحفظة",
+        "added": "وأضاف",
+        "contact_us": "وجود مشكلة؟اتصل بنا"
+    }
+}

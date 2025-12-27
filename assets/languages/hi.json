@@ -1,0 +1,251 @@
+{
+    "app_exit": {
+        "exit_text": "बाहर निकलने के लिए एक बार फिर से दबाएं"
+    },
+    "add_money": {
+        "add_money": "पैसे जोड़ें",
+        "add": "जोड़ना",
+        "enter_amount": "राशि डालें",
+        "amount": "मात्रा"
+    },
+    "login": {
+        "login": "लॉग इन करें",
+        "text1": "जारी रखने से आप सहमत हैं",
+        "text2": "नियम व शर्तें",
+        "text3": "शहर के सवार",
+        "ride_text": "सिटी राइडर के साथ सवारी",
+        "welcome_text": "आपका स्वागत है, कृपया अपना खाता लॉगिन करें",
+        "mobile_number": "मोबाइल नंबर",
+        "enter_number": "अपना मोबाइल संख्या दर्ज करे"
+    },
+    "otp": {
+        "didn't_text": "क्या ओटीपी नहीं मिला?",
+        "resend_OTP": "ओटीपी पुनः भेजें",
+        "verify": "सत्यापित करना",
+        "please_wait": "कृपया प्रतीक्षा करें",
+        "OTP_verification": "ओटीपी सत्यापन",
+        "confirm_text": "आपके मोबाइल नंबर +91 1234567890 पर आपको पुष्टिकरण कोड भेजा गया है"
+    },
+    "register": {
+        "register": "पंजीकरण करवाना",
+        "mobile_number": "मोबाइल नंबर",
+        "enter_number": "अपना मोबाइल संख्या दर्ज करे",
+        "email_address": "मेल पता",
+        "enter_email": "अपना ईमेल पता दर्ज करें",
+        "name": "नाम",
+        "enter_name": "अपना नाम दर्ज करें",
+        "welcome_text": "आपका स्वागत है, कृपया अपना खाता बनाएं",
+        "ride_text": "सिटी राइडर के साथ सवारी"
+    },
+    "confirm": {
+        "ride_time": "सवारी का समय",
+        "pause_time": "विराम का वक्त",
+        "travelled": "कूच",
+        "give_rate": "दर देना",
+        "please_text": "कृपया दर दें और अपनी सवारी का अनुभव हमारे साथ साझा करें",
+        "submit": "जमा करना",
+        "cancel": "रद्द करना",
+        "share_experience": "आपकी सवारी कैसी थी?\n हमारे साथ अपना अनुभव साझा करें",
+        "fixed_rent": "नियत किराया",
+        "ride_fare": "किमी सवारी किराया",
+        "pause_fare": "खतरे को रोकना",
+        "paid_wallet": "बटुए से भुगतान किया गया",
+        "pick_location": "लेने की जगह",
+        "drop_location": "ड्रॉप अप लोकेशन",
+        "calorie_burned": "कैलोरी जला दिया",
+        "ride_ended": "सवारी समाप्त हो गई"
+    },
+    "credit_card": {
+        "enter_details": "अपना कार्ड विवरण दर्ज करें",
+        "credit_card": "क्रेडिट कार्ड",
+        "enter_holde_name": "कार्ड धारक का नाम दर्ज करें",
+        "name_card": "कार्ड पर नाम",
+        "enter_number": "कार्ड नंबर दर्ज करें",
+        "card_number": "कार्ड संख्या",
+        "expire_date": "समाप्त होने की तिथि"
+    },
+    "detail": {
+        "ready_go": "जाने के लिए तैयार",
+        "rent": "किराया",
+        "parking_rules": "पार्किंग नियम",
+        "get_direction": "दिशा प्राप्त करना",
+        "unlock_now": "अभी खोलें",
+        "park_in_cityzone": "सिटी राइडर ज़ोन में पार्क",
+        "do_not_park": "निजी क्षेत्र में पार्क न करें",
+        "fixed_rent": "नियत किराया",
+        "per_km": "केएम द्वारा",
+        "pause_min": "रोकना/मिनट",
+        "battery_level": "बैटरी का स्तर",
+        "range_upto": "रेंज अप तक"
+    },
+    "end_ride": {
+        "end_ride": "अंत -सवारी",
+        "drop_point": "निकटतम बिंदु पर ड्रॉप",
+        "make_sure_text": "*सुनिश्चित करें कि आप केवल सिटी राइडर ज़ोन में पार्क करते हैं",
+        "back": "पीछे",
+        "confirm": "पुष्टि करना"
+    },
+    "home": {
+        "where_to_go": "आप कहाँ जाना चाहते हैं?",
+        "scooters_available": "स्कूटर उपलब्ध हैं",
+        "battery": "बैटरी",
+        "range": "श्रेणी",
+        "go_detail": "विस्तार से जाना"
+    },
+    "notification": {
+        "no_notification": "कोई नई अधिसूचना नहीं",
+        "removed_notification": "अधिसूचना से हटा दिया गया",
+        "ago": "पहले"
+    },
+    "onboarding": {
+        "find_destination": "अपना गंतव्य खोजें",
+        "scan_code": "स्कैन क्यू आर कोड",
+        "start_ride": "अपनी सवारी शुरू करें",
+        "skip": "छोडना",
+        "login": "लॉग इन करें",
+        "next": "अगला"
+    },
+    "app_settings": {
+        "app_settings": "एप्लिकेशन सेटिंग",
+        "dark_mode": "डार्क मोड",
+        "policy_community": "नीति और सामुदायिक",
+        "application_update": "अनुप्रयोग अद्यतन",
+        "allow_notification": "अधिसूचना की अनुमति दें"
+    },
+    "edit_profile": {
+        "edit_profile": "प्रोफ़ाइल संपादित करें",
+        "update": "अद्यतन",
+        "email_address": "मेल पता",
+        "enter_email": "ईमेल पता दर्ज करें",
+        "mobile_number": "मोबाइल नंबर",
+        "enter_number": "मोबाइल नंबर दर्ज करें",
+        "name": "नाम",
+        "enter_name": "अपना नाम दर्ज करें",
+        "change_profile_photo": "प्रोफ़ाइल फोटो बदलें",
+        "camera": "कैमरा",
+        "gallery": "गेलरी",
+        "remove": "निकालना"
+    },
+    "faqs": {
+        "faqs": "पूछे जाने वाले प्रश्न"
+    },
+    "help": {
+        "help_support": "मदद समर्थन",
+        "submit": "जमा करना",
+        "message": "संदेश",
+        "write_here": "यहाँ संदेश लिखें",
+        "email_address": "मेल पता",
+        "enter_email": "अपना ईमेल पता दर्ज करें",
+        "name": "नाम",
+        "enter_name": "अपना नाम दर्ज करें"
+    },
+    "language": {
+        "language": "भाषा",
+        "update": "अद्यतन"
+    },
+    "privacy_policy": {
+        "privacy_policy": "गोपनीयता नीति",
+        "introduction": "परिचय"
+    },
+    "profile": {
+        "profile": "प्रोफ़ाइल",
+        "ride_history": "सवारी इतिहास",
+        "refer_earn": "देखें और अर्जित करना",
+        "language": "भाषा",
+        "app_settings": "एप्लिकेशन सेटिंग",
+        "FAQs": "पूछे जाने वाले प्रश्न",
+        "privacy_policy": "गोपनीयता नीति",
+        "terms_condition": "नियम व शर्तें",
+        "help_support": "मदद समर्थन",
+        "logout_text": "क्या आप लॉग आउट करना चाहते हैं?",
+        "cancel": "रद्द करना",
+        "logout": "लॉग आउट",
+        "ride_taken": "सवारी की गई सवारी",
+        "ride": "सवारी",
+        "distance": "दूरी",
+        "calories": "कैलोरी"
+    },
+    "refer_and_earn": {
+        "refer_and_earn": "देखें और अर्जित करना",
+        "content_text": "इस लिंक को अपने दोस्तों को साझा करें, जब वे साइन इन करते हैं और पहली सवारी करते हैं तो आपको $30 मिलेगा।",
+        "text": "देखें और $30 तक कमाएं",
+        "share_via": "के माध्यम से लिंक साझा करें"
+    },
+    "ride_history": {
+        "ride_history": "सवारी इतिहास",
+        "give_rate": "दर देना",
+        "please_text": "कृपया दर दें और अपनी सवारी का अनुभव हमारे साथ साझा करें",
+        "submit": "जमा करना",
+        "cancel": "रद्द करना"
+    },
+    "terms_and_condition": {
+        "terms_and_condition": "नियम व शर्तें"
+    },
+    "receipt": {
+        "ride_start_location": "राइड स्टार्ट लोकेशन",
+        "ride_end_location": "सवारी अंत स्थान",
+        "purpose": "उद्देश्य",
+        "payment_method": "भुगतान विधि",
+        "payment_date": "भुगतान तिथि",
+        "payment_time": "भुगतान काल",
+        "cycle_no": "चक्र नहीं",
+        "receipt_no": "रसीद संख्या",
+        "name": "नाम",
+        "ride_time": "सवारी का समय",
+        "need_more_help": "और अधिक मदद की आवश्यकता है?",
+        "contact_us": "संपर्क करें",
+        "you_paid": "आपको भुगतान किया जाता है"
+    },
+    "scan": {
+        "enter_code_manually": "कोड मैनुअल तरीके से दर्ज करें",
+        "having_issue": "मुद्दा है?",
+        "scan_unlock": "अनलॉक करने के लिए स्कैन करना",
+        "scan_code_text": "स्कैन QR कोड जो आपको चक्र के पीछे मिलेगा"
+    },
+    "search": {
+        "type_search": "खोजने के लिए लिखें",
+        "recently_searched": "हाल ही में खोजा गया",
+        "use_current_location": "मेरे वर्तमान स्थान का उपयोग करें"
+    },
+    "search_result": {
+        "go_detail": "विस्तार से जाना",
+        "battery": "बैटरी",
+        "range": "श्रेणी",
+        "scooters_available": "स्कूटर उपलब्ध हैं"
+    },
+    "security_deposite": {
+        "later": "बाद में",
+        "security_deposit": "सुरक्षा जमा राशि",
+        "content_text": "यह केवल भुगतान सुरक्षा के लिए है, जब भी आप चाहें, यह पूरी तरह से वापसी योग्य होगा",
+        "pay_now": "अब भुगतान करें"
+    },
+    "start_ride": {
+        "range": "श्रेणी",
+        "battery_level": "बैटरी का स्तर",
+        "time_used": "समय का इस्तेमाल किया",
+        "travelled": "कूच",
+        "ride_paused": "सवारी करना",
+        "no_cost_till": "1 मिनट तक कोई लागत नहीं।फिर $ 0.10/मिनट",
+        "paused_time": "रुका हुआ समय",
+        "resume": "फिर शुरू करना",
+        "pause": "रोकना",
+        "end_ride": "अंत -सवारी"
+    },
+    "success": {
+        "enjoy_text": "अपनी सवारी का आनंद लें!",
+        "your_successfully_unlock": "आपकी बाइक सफलतापूर्वक अनलॉक करें",
+        "start_ride": "सवारी शुरू करें"
+    },
+    "wallet": {
+        "wallet": "बटुआ",
+        "recent_transaction": "हाल ही में लेन -देन",
+        "available_balance": "उपलब्ध शेष राशि",
+        "add_money": "पैसे जोड़ें"
+    },
+    "wallet_success": {
+        "back_home": "घर वापिस जा रहा हूँ",
+        "congratulation": "बधाई हो, आपके पैसे सफलतापूर्वक बटुए में जोड़े गए",
+        "added": "जोड़ा",
+        "contact_us": "मुद्दा है?संपर्क करें"
+    }
+}

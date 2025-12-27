@@ -1,0 +1,270 @@
+{
+  "app_exit": {
+    "exit_text": "Press back once again to exit the quiz app"
+  },
+  "add_money": {
+    "add_money": "Add coins",
+    "add": "Add",
+    "enter_amount": "Enter coin amount",
+    "amount": "Coins"
+  },
+  "login": {
+    "login": "Login",
+    "text1": "By continuing you agree to the",
+    "text2": "terms and conditions",
+    "text3": "of Quiz Master",
+    "ride_text": "Play with Quiz Master",
+    "welcome_text": "Welcome back! Log in to continue your quiz journey",
+    "mobile_number": "Mobile number",
+    "enter_number": "Enter your mobile number"
+  },
+  "otp": {
+    "didn't_text": "Didn’t get the OTP?",
+    "resend_OTP": "Resend OTP",
+    "verify": "Verify",
+    "please_wait": "Please wait",
+    "OTP_verification": "OTP Verification",
+    "confirm_text": "A confirmation code has been sent to your number +91 1234567890"
+  },
+  "register": {
+    "register": "Register",
+    "mobile_number": "Mobile number",
+    "enter_number": "Enter your mobile number",
+    "email_address": "Email address",
+    "enter_email": "Enter your email address",
+    "name": "Name",
+    "enter_name": "Enter your name",
+    "welcome_text": "Create your account to start playing",
+    "ride_text": "Join the Quiz Master community"
+  },
+  "confirm": {
+    "ride_time": "Quiz duration",
+    "pause_time": "Break time",
+    "travelled": "Questions attempted",
+    "give_rate": "Rate quiz",
+    "please_text": "Please rate and share your quiz experience with us",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "share_experience": "How was your quiz? \n Share your feedback with us",
+    "fixed_rent": "Base reward",
+    "ride_fare": "Points earned per question",
+    "pause_fare": "Bonus for streak",
+    "paid_wallet": "Coins used",
+    "pick_location": "Category chosen",
+    "drop_location": "Quiz completed",
+    "calorie_burned": "Brain cells used 😄",
+    "ride_ended": "Quiz finished"
+  },
+  "credit_card": {
+    "enter_details": "Enter your card details",
+    "credit_card": "Credit Card",
+    "enter_holde_name": "Enter cardholder name",
+    "name_card": "Name on card",
+    "enter_number": "Enter card number",
+    "card_number": "Card number",
+    "expire_date": "Expiration date"
+  },
+  "detail": {
+    "ready_go": "Ready to play?",
+    "rent": "Entry fee",
+    "parking_rules": "Quiz rules",
+    "get_direction": "View details",
+    "unlock_now": "Start quiz",
+    "park_in_cityzone": "Play within fair play zone",
+    "do_not_park": "No cheating allowed",
+    "fixed_rent": "Base reward",
+    "per_km": "Points per question",
+    "pause_min": "Pause/min",
+    "battery_level": "Energy level",
+    "range_upto": "Total questions"
+  },
+  "end_ride": {
+    "end_ride": "End quiz",
+    "drop_point": "Submit your answers",
+    "make_sure_text": "*Make sure all answers are submitted before exiting",
+    "back": "Back",
+    "confirm": "Confirm"
+  },"friends": {
+  "title": "Friends",
+  "my_friends": "My Friends",
+  "total": "Total",
+  "online": "Online",
+  "offline": "Offline",
+  "challenge": "Invite to a Challenge",
+  "add_friend": "Add New Friend",
+  "total_friends": "Total Friends"
+}
+,
+  "home": {
+    "where_to_go": "Choose your quiz category",
+    "scooters_available": "Quizzes available",
+    "battery": "Energy",
+    "range": "Questions",
+    "go_detail": "View details"
+  },
+  "notification": {
+    "no_notification": "No new notifications",
+    "removed_notification": "Removed from notifications",
+    "ago": "ago"
+  },
+  "onboarding": {
+        "find_destination": "Get ready to challenge your mind",
+    "scan_code": "Answer fun and tricky questions",
+    "start_ride": "Start your first quiz now",
+    "skip": "Skip",
+    "login": "Login",
+    "next": "Next"
+  },
+  "app_settings": {
+    "app_settings": "App settings",
+    "dark_mode": "Dark mode",
+    "policy_community": "Policy & community",
+    "application_update": "App update",
+    "allow_notification": "Allow notifications"
+  },
+  "edit_profile": {
+    "edit_profile": "Edit profile",
+    "update": "Update",
+    "email_address": "Email address",
+    "enter_email": "Enter email address",
+    "mobile_number": "Mobile number",
+    "enter_number": "Enter mobile number",
+    "name": "Name",
+    "enter_name": "Enter your name",
+    "change_profile_photo": "Change profile photo",
+    "camera": "Camera",
+    "gallery": "Gallery",
+    "remove": "Remove"
+  },
+  "faqs": {
+    "faqs": "FAQs"
+  },
+  "help": {
+    "help_support": "Help & support",
+    "submit": "Submit",
+    "message": "Message",
+    "write_here": "Write your message here",
+    "email_address": "Email address",
+    "enter_email": "Enter your email address",
+    "name": "Name",
+    "enter_name": "Enter your name"
+  },
+  "language": {
+    "language": "Language",
+    "update": "Update"
+  },
+  "privacy_policy": {
+    "privacy_policy": "Privacy policy",
+    "introduction": "Introduction"
+  },
+  "profile": {
+    "profile": "Profile",
+    "ride_history": "Quiz history",
+    "refer_earn": "Refer & earn",
+    "language": "Language",
+    "app_settings": "App settings",
+    "FAQs": "FAQs",
+    "privacy_policy": "Privacy policy",
+    "terms_condition": "Terms & conditions",
+    "help_support": "Help & support",
+    "logout_text": "Are you sure you want to logout?",
+    "cancel": "Cancel",
+    "logout": "Logout",
+    "ride_taken": "Quizzes played",
+    "ride": "Quiz",
+    "distance": "Questions",
+    "calories": "Score"
+  },
+  "refer_and_earn": {
+    "refer_and_earn": "Refer & earn",
+    "content_text": "Share this link with your friends — when they play their first quiz, you’ll earn bonus coins!",
+    "text": "Refer and earn rewards",
+    "share_via": "Share link via"
+  },
+  "ride_history": {
+    "ride_history": "Quiz history",
+    "give_rate": "Rate quiz",
+    "please_text": "Please rate and share your quiz experience with us",
+    "submit": "Submit",
+    "cancel": "Cancel"
+  },"quiz_history": {
+  "title": "Quiz History",
+  "score": "Score",
+  "duration": "Duration",
+  "rate_quiz": "Rate Quiz",
+  "rate_title": "How would you rate this quiz?",
+  "submit": "Submit",
+  "cancel": "Cancel"
+}
+,
+  "terms_and_condition": {
+    "terms_and_condition": "Terms and conditions"
+  },
+  "receipt": {
+    "ride_start_location": "Quiz category",
+    "ride_end_location": "Completed quiz",
+    "purpose": "Purpose",
+    "payment_method": "Payment method",
+    "payment_date": "Date",
+    "payment_time": "Time",
+    "cycle_no": "Quiz ID",
+    "receipt_no": "Receipt no",
+    "name": "Name",
+    "ride_time": "Quiz duration",
+    "need_more_help": "Need more help?",
+    "contact_us": "Contact us",
+    "you_paid": "You paid"
+  },
+  "scan": {
+    "enter_code_manually": "Enter quiz code manually",
+    "having_issue": "Having issues?",
+    "scan_unlock": "Scan to start quiz",
+    "scan_code_text": "Scan the QR code to join your quiz session"
+  },
+  "search": {
+    "type_search": "Search quiz categories",
+    "recently_searched": "Recently searched",
+    "use_current_location": "Use my interests"
+  },
+  "search_result": {
+    "go_detail": "View details",
+    "battery": "Energy",
+    "range": "Questions",
+    "scooters_available": "Quizzes available"
+  },
+  "security_deposite": {
+    "later": "Later",
+    "security_deposit": "Quiz entry coins",
+    "content_text": "You’ll need a few coins to join this quiz. Don’t worry, rewards are waiting!",
+    "pay_now": "Join now"
+  },
+  "start_ride": {
+    "range": "Questions",
+    "battery_level": "Energy level",
+    "time_used": "Time used",
+    "travelled": "Questions answered",
+    "ride_paused": "Quiz paused",
+    "no_cost_till": "No penalty for quick breaks",
+    "paused_time": "Paused time",
+    "resume": "Resume",
+    "pause": "Pause",
+    "end_ride": "End quiz"
+  },
+  "success": {
+    "enjoy_text": "Enjoy your quiz!",
+    "your_successfully_unlock": "You’ve successfully joined the quiz",
+    "start_ride": "Start playing"
+  },
+  "wallet": {
+    "wallet": "Wallet",
+    "recent_transaction": "Recent transactions",
+    "available_balance": "Available coins",
+    "add_money": "Add coins"
+  },
+  "wallet_success": {
+    "back_home": "Back to home",
+    "congratulation": "Congratulations! Your coins were successfully added.",
+    "added": "Added",
+    "contact_us": "Having issues? Contact us"
+  }
+}
