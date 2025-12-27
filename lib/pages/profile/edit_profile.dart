@@ -64,11 +64,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           
           if (mounted) {
             setState(() {
-              // Ensure we don't overwrite user edits if they started typing (though unrelated here since we just loaded)
-              // But for "auto-fill" we want to enforce server data
               nameController.text = data['name'] ?? nameController.text;
               emailController.text = data['email'] ?? emailController.text;
-              numberController.text = data['mobile'] ?? numberController.text;
+              // Check 'mobile' AND 'phone' for robustness
+              numberController.text = data['mobile'] ?? data['phone'] ?? numberController.text;
               
               // Add timestamp to bust cache if it's the same URL
               String? newImg = data['profile_img'];
@@ -87,10 +86,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             await prefs.setString('user_name', nameController.text);
             await prefs.setString('user_email', emailController.text);
             await prefs.setString('user_mobile', numberController.text);
-            if (profileImg != null) {
-               // Store the raw URL without timestamp in prefs usually, but for display we need bust. 
-               // Let's just store what we got.
-               await prefs.setString('profile_img', data['profile_img'] ?? '');
+            if (data['profile_img'] != null) {
+               await prefs.setString('profile_img', data['profile_img']);
             }
           }
         }
@@ -102,90 +99,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
   }
 
-  // ... (build method, etc.)
-
-  void _showImagePickerSheet() {
-    showModalBottomSheet(
-      backgroundColor: Colors.transparent,
-      context: context,
-      builder: (context) => Container(
-        margin: const EdgeInsets.all(fixPadding),
-        decoration: BoxDecoration(
-          color: whiteColor,
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(fixPadding * 2.0),
-              child: Text(
-                getTranslation(context, 'edit_profile.change_profile_photo'),
-                style: semibold18BlackText,
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildOptionEvent(
-                  const Color(0xFF1E4799),
-                  Icons.camera_alt,
-                  getTranslation(context, 'edit_profile.camera'),
-                  ImageSource.camera,
-                ),
-                _buildOptionEvent(
-                  Colors.green,
-                  Icons.photo_library,
-                  getTranslation(context, 'edit_profile.gallery'),
-                  ImageSource.gallery,
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildOptionEvent(
-      Color color, IconData icon, String title, ImageSource source) {
-    return InkWell(
-      onTap: () {
-        Navigator.pop(context);
-        _pickImage(source);
-      },
-      child: Column(
-        children: [
-          Container(
-            height: 50,
-            width: 50,
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, color: color, size: 24),
-          ),
-          const SizedBox(height: 8),
-          Text(title, style: medium14BlackText),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _pickImage(ImageSource source) async {
-    try {
-      final XFile? image = await _picker.pickImage(source: source);
-      if (image != null) {
-        await _uploadImage(image.path);
-      }
-    } catch (e) {
-      print("Image picking error: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Failed to pick image")),
-      );
-    }
-  }
+// ...
 
   Future<void> _uploadImage(String filePath) async {
     setState(() => _isSaving = true);
@@ -203,8 +117,36 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           const SnackBar(content: Text("Profile image updated!"), backgroundColor: Colors.green),
         );
         
-        // Reload data to get the new image URL and refresh UI
-        // This will now apply the cache-busting timestamp
+        // Try to extract new URL immediately to update UI faster
+        String? newUrl;
+        
+        // Handle response format: { "data": { "profile": "http..." } }
+        if (decoded['data'] is Map && decoded['data']['profile'] != null) {
+          newUrl = decoded['data']['profile'];
+        } else if (decoded['data'] is String) {
+           // Fallback if data is just string
+           newUrl = decoded['data'];
+        } else if (decoded['data'] is Map && decoded['data']['profile_img'] != null) {
+          // Fallback old structure check
+          newUrl = decoded['data']['profile_img'];
+        }
+
+        if (newUrl != null && newUrl.isNotEmpty) {
+           final prefs = await SharedPreferences.getInstance();
+           await prefs.setString('profile_img', newUrl); // Persistence
+           if (mounted) {
+             setState(() {
+               // Initial bust
+               if (!newUrl!.contains('?')) {
+                   profileImg = "$newUrl?t=${DateTime.now().millisecondsSinceEpoch}";
+               } else {
+                   profileImg = "$newUrl&t=${DateTime.now().millisecondsSinceEpoch}";
+               }
+             });
+           }
+        }
+
+        // Full refresh to be safe
         await _loadInitialData();
         
       } else {
@@ -461,7 +403,87 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
   }
 
-  // Helpers located below build method
-  // ...
+  void _showImagePickerSheet() {
+    showModalBottomSheet(
+      backgroundColor: Colors.transparent,
+      context: context,
+      builder: (context) => Container(
+        margin: const EdgeInsets.all(fixPadding),
+        decoration: BoxDecoration(
+          color: whiteColor,
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(fixPadding * 2.0),
+              child: Text(
+                getTranslation(context, 'edit_profile.change_profile_photo'),
+                style: semibold18BlackText,
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildOptionEvent(
+                  const Color(0xFF1E4799),
+                  Icons.camera_alt,
+                  getTranslation(context, 'edit_profile.camera'),
+                  ImageSource.camera,
+                ),
+                _buildOptionEvent(
+                  Colors.green,
+                  Icons.photo_library,
+                  getTranslation(context, 'edit_profile.gallery'),
+                  ImageSource.gallery,
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOptionEvent(
+      Color color, IconData icon, String title, ImageSource source) {
+    return InkWell(
+      onTap: () {
+        Navigator.pop(context);
+        _pickImage(source);
+      },
+      child: Column(
+        children: [
+          Container(
+            height: 50,
+            width: 50,
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: color, size: 24),
+          ),
+          const SizedBox(height: 8),
+          Text(title, style: medium14BlackText),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      final XFile? image = await _picker.pickImage(source: source);
+      if (image != null) {
+        await _uploadImage(image.path);
+      }
+    } catch (e) {
+      print("Image picking error: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Failed to pick image")),
+      );
+    }
+  }
 
 }

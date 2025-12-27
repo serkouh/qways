@@ -91,16 +91,33 @@ class _LoginScreenState extends State<LoginScreen> {
 
       print("📩 API Login Response: $data");
 
-      if (response.statusCode == 200 && data["data"]?["api_token"] != null) {
-        final token = data["data"]["api_token"];
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString("api_token", token);
+      if (response.statusCode == 200 && data["data"] != null) {
+        final userData = data["data"];
+        if (userData["api_token"] != null) {
+          final token = userData["api_token"];
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString("api_token", token);
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Connexion réussie ✅")),
-        );
+          // Save full user profile
+          if (userData["id"] != null) await prefs.setString("user_id", userData["id"].toString());
+          if (userData["name"] != null) await prefs.setString("user_name", userData["name"].toString());
+          if (userData["email"] != null) await prefs.setString("user_email", userData["email"].toString());
+          if (userData["mobile"] != null) await prefs.setString("user_mobile", userData["mobile"].toString());
+          if (userData["profile"] != null) await prefs.setString("profile_img", userData["profile"].toString());
+          if (userData["coins"] != null) await prefs.setString("user_coins", userData["coins"].toString());
+          
+          print("✅ User data saved: ${userData['name']}, ${userData['email']}");
 
-        Navigator.pushNamed(context, '/bottombar');
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Connexion réussie ✅")),
+          );
+
+          Navigator.pushNamed(context, '/bottombar');
+        } else {
+           ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Erreur: Token manquant")),
+          );
+        }
       } else {
         final message =
             data["message"] ?? "Échec de la connexion. Veuillez réessayer";

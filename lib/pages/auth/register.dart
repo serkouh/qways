@@ -121,10 +121,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
         final token = responseData["api_token"].toString();
         await prefs.setString("api_token", token);
 
-        // ✅ Save user credentials
+        // ✅ Save user credentials & profile data
+        if (responseData["id"] != null) await prefs.setString("user_id", responseData["id"].toString());
         await prefs.setString("user_name", nameController.text.trim());
         await prefs.setString("user_email", emailController.text.trim());
         await prefs.setString("user_password", passwordController.text.trim());
+        await prefs.setString("user_mobile", mobileController.text.trim());
+        
+        if (responseData["profile"] != null) await prefs.setString("profile_img", responseData["profile"].toString());
+        if (responseData["coins"] != null) await prefs.setString("user_coins", responseData["coins"].toString());
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Inscription réussie 🎉')),
