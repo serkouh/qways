@@ -17,6 +17,8 @@ class _RoomsListScreenState extends State<RoomsListScreen> {
   List roomsList = [];
   bool isLoading = true;
   String? errorMessage;
+  String? joiningRoomUuid;
+  bool joining = false;
 
   @override
   void initState() {
@@ -191,10 +193,106 @@ class _RoomsListScreenState extends State<RoomsListScreen> {
                                       ],
                                     ),
                                   ),
-                                  const Icon(
-                                    Icons.arrow_forward_ios,
-                                    size: 18,
-                                    color: Colors.grey,
+                                  Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      SizedBox(
+                                        height: 36,
+                                        child: ElevatedButton(
+                                          onPressed: joining
+                                              ? null
+                                              : () async {
+                                                  final uuid = room['room_uuid']
+                                                      ?.toString();
+                                                  if (uuid == null) return;
+                                                  setState(() {
+                                                    joining = true;
+                                                    joiningRoomUuid = uuid;
+                                                  });
+
+                                                  try {
+                                                    final res =
+                                                        await ApiService.post(
+                                                      endpoint:
+                                                          'join_geo_quiz_room',
+                                                      withAuth: true,
+                                                      body: {'room_uuid': uuid},
+                                                    );
+
+                                                    final decoded = ApiService
+                                                        .decodeResponse(res);
+
+                                                    if (res.statusCode == 200 &&
+                                                        decoded['error'] ==
+                                                            false) {
+                                                      // Navigate to joinGame / lobby
+                                                      if (mounted) {
+                                                        Navigator.pushNamed(
+                                                            context,
+                                                            '/joinGame',
+                                                            arguments: {
+                                                              'room_uuid': uuid
+                                                            });
+                                                      }
+                                                    } else {
+                                                      final message =
+                                                          decoded['message']
+                                                              ?.toString();
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(
+                                                        SnackBar(
+                                                            content: Text(
+                                                                getApiMessage(
+                                                                        decoded) ??
+                                                                    message ??
+                                                                    'Failed to join')),
+                                                      );
+                                                    }
+                                                  } catch (e) {
+                                                    print(
+                                                        'Join room error: $e');
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(
+                                                            const SnackBar(
+                                                                content: Text(
+                                                                    'Unable to join room')));
+                                                  } finally {
+                                                    if (mounted)
+                                                      setState(() {
+                                                        joining = false;
+                                                        joiningRoomUuid = null;
+                                                      });
+                                                  }
+                                                },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: primaryColor,
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12, vertical: 8),
+                                          ),
+                                          child: joining &&
+                                                  joiningRoomUuid ==
+                                                      room['room_uuid']
+                                              ? const SizedBox(
+                                                  width: 16,
+                                                  height: 16,
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                          strokeWidth: 2,
+                                                          color: Colors.white))
+                                              : const Text('Join',
+                                                  style: TextStyle(
+                                                      color: Colors.white)),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 6),
+                                      const Icon(
+                                        Icons.arrow_forward_ios,
+                                        size: 18,
+                                        color: Colors.grey,
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),

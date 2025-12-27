@@ -6,6 +6,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:qways/theme/theme.dart';
 import 'package:qways/constant/apiservice.dart';
+import 'package:qways/services/quiz_service.dart';
+import 'package:qways/model/quiz_models.dart';
 
 class GeoQuizJourney extends StatefulWidget {
   const GeoQuizJourney({super.key});
@@ -36,13 +38,21 @@ class _GeoQuizJourneyState extends State<GeoQuizJourney> {
     final args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
 
-    final quizId = args["room_uuid"].toString();
-
+    // The navigator may pass either a geo_quiz_id (numeric) or a room_uuid (string like GQR_...)
     roomUuid = args["room_uuid"]?.toString();
 
-    print("📥 Received quizId from Navigator: $quizId");
+    print("📥 Received navigation arg (room_uuid or geo_quiz_id): $roomUuid");
 
-    getGeoQuizDetails(quizId);
+    if (roomUuid == null) return;
+
+    // If it contains letters/underscore, assume it's a room UUID and load questions from the room
+    final isRoomUuid = RegExp(r'[A-Za-z_]').hasMatch(roomUuid!);
+    if (isRoomUuid) {
+      _loadFromRoom(roomUuid!);
+    } else {
+      // otherwise treat as geo_quiz_id
+      getGeoQuizDetails(roomUuid!);
+    }
   }
 
   GeoQuiz? quiz;
@@ -75,6 +85,68 @@ class _GeoQuizJourneyState extends State<GeoQuizJourney> {
     print("📍 Total steps: ${steps.length}");
 
     _setNextStepLocation();
+  }
+
+  Future<void> _loadFromRoom(String roomUuid) async {
+    try {
+      print("📡 Calling → get_room_quiz_questions for room: $roomUuid");
+      final questions = await QuizService.getQuestions(roomUuid);
+      if (questions.isEmpty) {
+        print("⚠️ No questions returned for room: $roomUuid");
+        return;
+      }
+
+      final converted = questions.map((q) {
+        return GeoQuizStep(
+          id: q.stepNumber,
+          stepNumber: q.stepNumber,
+          question: q.question,
+          option1: q.option1,
+          option2: q.option2,
+          option3: q.option3,
+          correctAnswer: 0,
+          latitude: q.latitude,
+          longitude: q.longitude,
+          radiusMeters: 60,
+          penaltyMinutes: 0,
+          hint: '',
+          imageUrl: '',
+          points: q.points,
+          timeLimitSeconds: q.timeLimitSeconds,
+        );
+      }).toList();
+
+      final wrapper = GeoQuiz(
+        id: 0,
+        title: 'Room Quiz',
+        description: 'Loaded from room',
+        locationCity: '',
+        locationCountry: '',
+        themeCategory: '',
+        minSteps: converted.length,
+        totalSteps: converted.length,
+        estimatedDuration: 0,
+        difficultyLevel: '',
+        createdBy: 0,
+        status: 1,
+        isPublished: 1,
+        dateCreated: '',
+        dateUpdated: null,
+        startDate: '',
+        endDate: '',
+        totalParticipants: 0,
+        steps: converted,
+      );
+
+      setState(() {
+        quiz = wrapper;
+        steps = converted;
+      });
+
+      _setNextStepLocation();
+    } catch (e) {
+      print('Error loading room questions: $e');
+    }
   }
 
   void _setNextStepLocation() {
