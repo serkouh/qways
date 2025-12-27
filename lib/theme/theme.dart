@@ -163,3 +163,16 @@ const medium16BlackText =
     TextStyle(color: black2FColor, fontSize: 16, fontWeight: FontWeight.w500);
 
 const regular14Grey = TextStyle(color: greyColor, fontSize: 14);
+
+const bold20White =
+    TextStyle(color: whiteColor, fontSize: 20, fontWeight: FontWeight.w700);
+
+const semibold12Grey =
+    TextStyle(color: greyColor, fontSize: 12, fontWeight: FontWeight.w600);
+
+const medium14Grey =
+    TextStyle(color: greyColor, fontSize: 14, fontWeight: FontWeight.w500);
+
+const medium14BlackText =
+    TextStyle(color: black2FColor, fontSize: 14, fontWeight: FontWeight.w500);
+
