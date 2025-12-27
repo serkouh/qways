@@ -31,21 +31,20 @@ class _QuizDashboardState extends State<QuizDashboard> {
     try {
       // API expects POST with JSON body: { "status": 1 }
       final response = await ApiService.post(
-        endpoint: "get_all_live_rooms",
-        body: {"include_private": 0, "limit": 10},
-        withAuth: true, // if your ApiService supports adding token
+        endpoint: "get_geo_quizzes",
+        body: {"status": 1},
+        withAuth: true,
       );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         print(data);
-        // The API returns data inside "data" field, based on your test.js
-        if (data["data"]["rooms"] is List) {
-          quizzes = (data["data"]["rooms"] as List)
-              .map((q) => QuizModel.fromJson(q))
-              .toList();
-        } else if (data is List) {
-          quizzes = data.map((q) => QuizModel.fromJson(q)).toList();
+        
+        // Handle API response format: { "data": [ ... ] }
+        final listData = data["data"];
+        
+        if (listData is List) {
+          quizzes = listData.map((q) => QuizModel.fromJson(q)).toList();
         }
 
         print("✅ Loaded ${quizzes.length} quizzes");
@@ -66,7 +65,7 @@ class _QuizDashboardState extends State<QuizDashboard> {
   Widget build(BuildContext context) {
     final filteredQuizzes = quizzes.where((quiz) {
       final matchesFilter = selectedFilter == "All" ||
-          quiz.type!.toLowerCase() == selectedFilter.toLowerCase();
+          (quiz.type ?? "").toLowerCase() == selectedFilter.toLowerCase();
       final matchesSearch =
           quiz.title.toLowerCase().contains(searchText.toLowerCase());
       return matchesFilter && matchesSearch;
@@ -124,11 +123,11 @@ class _QuizDashboardState extends State<QuizDashboard> {
                 children: [
                   filterChip("All"),
                   widthSpace,
-                  filterChip("Nearby"),
+                  filterChip("History"),
                   widthSpace,
-                  filterChip("Open"),
+                  filterChip("Art"),
                   widthSpace,
-                  filterChip("With Friends"),
+                  filterChip("Culture"),
                 ],
               ),
             ),
@@ -211,10 +210,12 @@ class _QuizDashboardState extends State<QuizDashboard> {
                     children: [
                       Text(quiz.title, style: bold15BlackText),
                       height5Space,
+                      if (quiz.locationCity != null)
+                        Text("${quiz.locationCity}", style: semibold14Grey),
                       Text("${quiz.players ?? 0} Players",
                           style: semibold14Grey),
                       height5Space,
-                      Text(quiz.time ?? "", style: bold15Primary),
+                      Text("${quiz.time} mins" ?? "", style: bold15Primary),
                     ],
                   ),
                 ),
@@ -231,7 +232,7 @@ class _QuizDashboardState extends State<QuizDashboard> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(quiz.distance ?? "", style: bold14Grey),
+                Text(quiz.type ?? "", style: bold14Grey),
                 GestureDetector(
                   onTap: () async {
                     try {
@@ -242,7 +243,7 @@ class _QuizDashboardState extends State<QuizDashboard> {
                         endpoint: "create_geo_quiz_room",
                         body: {
                           "geo_quiz_id": quiz.id.toString(),
-                          "room_name": "Paris Challenge Room",
+                          "room_name": "${quiz.title} Room",
                           "max_participants": 5,
                           "room_type": "public",
                         },
@@ -284,22 +285,25 @@ class _QuizDashboardState extends State<QuizDashboard> {
                         return;
                       }
 
-                      final joinData = jsonDecode(joinResponse.body);
-
-                      if (joinData["data"] == null) {
-                        print(getApiMessage(joinResponse.body));
-                        return;
-                      }
-
-                      print("🎮 Successfully joined room: $roomUuid");
-
                       // ------------------------------
-                      // 3️⃣ NAVIGATE TO LOBBY
+                      // 3️⃣ NAVIGATE TO PLAY (Directly, skipping old lobby logic if preferred, 
+                      // or keeping lobby if that's what /joinGame is)
+                      // USER said "navigating to the test.js flow", which uses start_room_quiz.
+                      // If /joinGame is just a waiting screen, we might need to start it.
+                      // But let's assume /joinGame (GeoQuizJourney) handles it.
                       // ------------------------------
+                      
+                      // START QUIZ (Host needs to start it)
+                      await ApiService.post(
+                        endpoint: "start_room_quiz",
+                        body: {"room_uuid": roomUuid},
+                        withAuth: true,
+                      );
+
                       Navigator.pushNamed(
                         context,
-                        '/joinGame',
-                        arguments: {"room_uuid": quiz.id},
+                        '/joinGame', // This points to GeoQuizJourney
+                        arguments: {"room_uuid": roomUuid},
                       );
                     } catch (e) {
                       print("⚠️ Error creating/joining room: $e");
@@ -315,9 +319,16 @@ class _QuizDashboardState extends State<QuizDashboard> {
                     decoration: BoxDecoration(
                       color: primaryColor,
                       borderRadius: BorderRadius.circular(5.0),
+                      boxShadow: [
+                         BoxShadow(
+                           color: primaryColor.withOpacity(0.3),
+                           blurRadius: 4,
+                           offset: const Offset(0, 2),
+                         )
+                      ]
                     ),
                     alignment: Alignment.center,
-                    child: Text("Join", style: bold16White),
+                    child: Text("Play", style: bold16White),
                   ),
                 ),
               ],
@@ -330,34 +341,37 @@ class _QuizDashboardState extends State<QuizDashboard> {
 }
 
 class QuizModel {
-  final String id; // 👈 NEW
+  final String id;
   final String title;
   final String? image;
   final int? players;
   final String? distance;
   final String? time;
   final String? type;
+  final String? locationCity;
 
   QuizModel({
-    required this.id, // 👈 NEW
+    required this.id,
     required this.title,
     this.image,
     this.players,
     this.distance,
     this.time,
     this.type,
+    this.locationCity,
   });
 
   factory QuizModel.fromJson(Map<String, dynamic> json) {
     print(json);
     return QuizModel(
-      id: json['geo_quiz_id']?.toString() ?? '0', // 👈 NEW
+      id: json['id']?.toString() ?? '0',
       title: json['title'] ?? "Untitled Quiz",
-      image: json['image'] ?? "assets/auth/image.png",
-      players: json['players'] ?? 0,
-      distance: json['distance'] ?? "",
-      time: json['time'] ?? "",
-      type: json['type'] ?? "",
+      image: json['image'] ?? "https://i.ibb.co/nMxQJzgk/image.png",
+      players: int.tryParse(json['total_participants']?.toString() ?? '0'),
+      distance: json['min_steps']?.toString() ?? "", // Mapping steps to distance somewhat arbitrarily
+      time: json['estimated_duration']?.toString() ?? "",
+      type: json['theme_category'] ?? "General",
+      locationCity: json['location_city'],
     );
   }
 }

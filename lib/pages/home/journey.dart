@@ -772,26 +772,27 @@ class GeoQuiz {
 
   factory GeoQuiz.fromJson(Map<String, dynamic> json) {
     return GeoQuiz(
-      id: int.parse(json["id"]),
+      id: int.tryParse(json["id"]?.toString() ?? "0") ?? 0,
       title: json["title"] ?? "",
       description: json["description"] ?? "",
       locationCity: json["location_city"] ?? "",
       locationCountry: json["location_country"] ?? "",
       themeCategory: json["theme_category"] ?? "",
-      minSteps: int.parse(json["min_steps"]),
-      totalSteps: int.parse(json["total_steps"]),
-      estimatedDuration: int.parse(json["estimated_duration"]),
+      minSteps: int.tryParse(json["min_steps"]?.toString() ?? "0") ?? 0,
+      totalSteps: int.tryParse(json["total_steps"]?.toString() ?? "0") ?? 0,
+      estimatedDuration: int.tryParse(json["estimated_duration"]?.toString() ?? "0") ?? 0,
       difficultyLevel: json["difficulty_level"] ?? "",
-      createdBy: int.parse(json["created_by"]),
-      status: int.parse(json["status"]),
-      isPublished: int.parse(json["is_published"]),
+      createdBy: int.tryParse(json["created_by"]?.toString() ?? "0") ?? 0,
+      status: int.tryParse(json["status"]?.toString() ?? "0") ?? 0,
+      isPublished: int.tryParse(json["is_published"]?.toString() ?? "0") ?? 0,
       dateCreated: json["date_created"] ?? "",
       dateUpdated: json["date_updated"],
       startDate: json["start_date"] ?? "",
       endDate: json["end_date"] ?? "",
-      totalParticipants: int.parse(json["total_participants"]),
-      steps:
-          (json["steps"] as List).map((s) => GeoQuizStep.fromJson(s)).toList(),
+      totalParticipants: int.tryParse(json["total_participants"]?.toString() ?? "0") ?? 0,
+      steps: (json["steps"] is List) 
+          ? (json["steps"] as List).map((s) => GeoQuizStep.fromJson(s)).toList() 
+          : [],
     );
   }
 }
@@ -833,21 +834,21 @@ class GeoQuizStep {
 
   factory GeoQuizStep.fromJson(Map<String, dynamic> json) {
     return GeoQuizStep(
-      id: int.parse(json["id"]),
-      stepNumber: int.parse(json["step_number"]),
+      id: int.tryParse(json["id"]?.toString() ?? "0") ?? 0,
+      stepNumber: int.tryParse(json["step_number"]?.toString() ?? "1") ?? 1,
       question: json["question"] ?? "",
       option1: json["option_1"] ?? "",
       option2: json["option_2"] ?? "",
       option3: json["option_3"] ?? "",
-      correctAnswer: int.parse(json["correct_answer"]),
-      latitude: double.parse(json["latitude"]),
-      longitude: double.parse(json["longitude"]),
-      radiusMeters: int.parse(json["radius_meters"]),
-      penaltyMinutes: int.parse(json["penalty_minutes"]),
+      correctAnswer: int.tryParse(json["correct_answer"]?.toString() ?? "0") ?? 0,
+      latitude: double.tryParse(json["latitude"]?.toString() ?? "0.0") ?? 0.0,
+      longitude: double.tryParse(json["longitude"]?.toString() ?? "0.0") ?? 0.0,
+      radiusMeters: int.tryParse(json["radius_meters"]?.toString() ?? "60") ?? 60,
+      penaltyMinutes: int.tryParse(json["penalty_minutes"]?.toString() ?? "0") ?? 0,
       hint: json["hint"] ?? "",
       imageUrl: json["image_url"] ?? "",
-      points: int.parse(json["points"]),
-      timeLimitSeconds: int.parse(json["time_limit_seconds"]),
+      points: int.tryParse(json["points"]?.toString() ?? "10") ?? 10,
+      timeLimitSeconds: int.tryParse(json["time_limit_seconds"]?.toString() ?? "300") ?? 300,
     );
   }
 }
