@@ -15,7 +15,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'dart:async';
-import 'package:uni_links/uni_links.dart';
+import 'package:app_links/app_links.dart';
 import 'package:qways/services/quiz_service.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -63,33 +63,38 @@ class _MyAppState extends State<MyApp> {
     _initDeepLinkListener();
   }
 
-  StreamSubscription? _sub;
+  late AppLinks _appLinks;
+  StreamSubscription<Uri>? _sub;
 
   Future<void> _initDeepLinkListener() async {
+    _appLinks = AppLinks();
+
     // 1. Handle Initial Link (App started via link)
     try {
-      final initialLink = await getInitialLink();
-      if (initialLink != null) _handleLink(initialLink);
+      final initialUri = await _appLinks.getInitialLink();
+      if (initialUri != null) {
+        _handleLink(initialUri);
+      }
     } catch (e) {
       print("Deep Link Init Error: $e");
     }
 
-    // 2. Handle Background/Foreground Links (App already running)
-    _sub = linkStream.listen((String? link) {
-      if (link != null) _handleLink(link);
+    // 2. Handle Stream (Background/Foreground)
+    _sub = _appLinks.uriLinkStream.listen((Uri? uri) {
+      if (uri != null) {
+         _handleLink(uri);
+      }
     }, onError: (err) {
       print("Deep Link Stream Error: $err");
     });
   }
 
-  void _handleLink(String link) {
-    print("🔗 Received Deep Link: $link");
-    final uri = Uri.parse(link);
+  void _handleLink(Uri uri) {
+    print("🔗 Received Deep Link: $uri");
     
     // Check for room param in qways://join?room=... or https://qways.app/join?room=...
     String? roomUuid = uri.queryParameters['room'];
     
-    // Also handle path based /join/<uuid> if needed, but query param is standard for now
     if (roomUuid != null && roomUuid.isNotEmpty) {
        _joinAndNavigate(roomUuid);
     }
