@@ -12,7 +12,13 @@ import 'localization/localization.dart';
 import 'pages/screens.dart';
 
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart'; // Make sure this file exists
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'dart:async';
+import 'package:uni_links/uni_links.dart';
+import 'package:qways/services/quiz_service.dart';
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Ensure Flutter bindings
@@ -41,8 +47,6 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  @override
-  void didChangeDependencies() {
     getLocale().then((locale) {
       setState(() {
         _locale = locale;
@@ -52,8 +56,80 @@ class _MyAppState extends State<MyApp> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _initDeepLinkListener();
+  }
+
+  StreamSubscription? _sub;
+
+  Future<void> _initDeepLinkListener() async {
+    // 1. Handle Initial Link (App started via link)
+    try {
+      final initialLink = await getInitialLink();
+      if (initialLink != null) _handleLink(initialLink);
+    } catch (e) {
+      print("Deep Link Init Error: $e");
+    }
+
+    // 2. Handle Background/Foreground Links (App already running)
+    _sub = linkStream.listen((String? link) {
+      if (link != null) _handleLink(link);
+    }, onError: (err) {
+      print("Deep Link Stream Error: $err");
+    });
+  }
+
+  void _handleLink(String link) {
+    print("🔗 Received Deep Link: $link");
+    final uri = Uri.parse(link);
+    
+    // Check for room param in qways://join?room=... or https://qways.app/join?room=...
+    String? roomUuid = uri.queryParameters['room'];
+    
+    // Also handle path based /join/<uuid> if needed, but query param is standard for now
+    if (roomUuid != null && roomUuid.isNotEmpty) {
+       _joinAndNavigate(roomUuid);
+    }
+  }
+
+  Future<void> _joinAndNavigate(String roomUuid) async {
+    print("🚀 Auto-joining Room: $roomUuid");
+    
+    // Wait for context/navigation to be ready if app just started
+    await Future.delayed(const Duration(seconds: 1));
+
+    try {
+      final res = await QuizService.joinRoom(roomUuid);
+      // Whether success or already joined (error: false usually), nav to room
+      
+      // If error (e.g. invalid room), show snippet
+      if (res['error'] == true && 
+          !res['message'].toString().toLowerCase().contains("already")) {
+           print("❌ Join Failed: ${res['message']}");
+           return;
+      }
+      
+      // Navigate
+      navigatorKey.currentState?.pushNamed(
+        '/joinGame',
+        arguments: {"room_uuid": roomUuid},
+      );
+    } catch (e) {
+      print("Deep Link Join Error: $e");
+    }
+  }
+
+  @override
+  void dispose() {
+    _sub?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(

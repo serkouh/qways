@@ -27,6 +27,26 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <!-- Deep Linking -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Custom Scheme: qways://join?room=... -->
+                <data
+                    android:scheme="qways"
+                    android:host="join" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- App Links: https://qways.app/join?room=... -->
+                <data
+                    android:scheme="https"
+                    android:host="qways.app"
+                    android:pathPrefix="/join" />
+            </intent-filter>
         </activity>
            <meta-data
             android:name="com.google.android.geo.API_KEY"

@@ -5,15 +5,17 @@ import 'package:qways/localization/localization_const.dart';
 import 'package:qways/pages/chatting/chat.dart';
 import 'package:qways/theme/theme.dart';
 import 'package:qways/services/quiz_service.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+import 'package:share_plus/share_plus.dart';
 
-class RoomsListScreen extends StatefulWidget {
-  const RoomsListScreen({super.key});
+class RoomLibraryScreen extends StatefulWidget {
+  const RoomLibraryScreen({super.key});
 
   @override
-  State<RoomsListScreen> createState() => _RoomsListScreenState();
+  State<RoomLibraryScreen> createState() => _RoomLibraryScreenState();
 }
 
-class _RoomsListScreenState extends State<RoomsListScreen>
+class _RoomLibraryScreenState extends State<RoomLibraryScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
@@ -205,9 +207,72 @@ class _RoomsListScreenState extends State<RoomsListScreen>
           ),
           // Actions
           if (isPublic)
-            _buildJoinButton(uuid)
-          else
-            _buildEnterButton(room), // For "My Rooms" we enter directly
+             _buildJoinButton(uuid)
+          else 
+             Row(
+               children: [
+                 _buildShareButton(uuid, name),
+                 const SizedBox(width: 8),
+                 _buildEnterButton(room),
+               ],
+             ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildShareButton(String uuid, String name) {
+    return IconButton(
+      onPressed: () => _showShareDialog(uuid, name),
+      icon: const Icon(Icons.share, color: primaryColor),
+      tooltip: "Partager",
+    );
+  }
+
+  void _showShareDialog(String uuid, String name) {
+    final String link = "https://qways.app/join?room=$uuid";
+    // Using a custom URL scheme for deep linking if preferred: qways://join?room=$uuid
+    
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        title: Center(child: Text("Partager la Salle", style: bold16BlackText)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(name, style: semibold14Grey),
+            const SizedBox(height: 16),
+            SizedBox(
+              height: 200,
+              width: 200,
+              child: QrImageView(
+                data: link,
+                version: QrVersions.auto,
+                size: 200.0,
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              "Scannez ce QR Code pour rejoindre !",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 12, color: greyColor),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton.icon(
+             onPressed: () {
+               Share.share("Rejoignez ma salle QuizGeo '$name' ! Cliquez ici : $link");
+               Navigator.pop(ctx);
+             },
+             icon: const Icon(Icons.share),
+             label: const Text("Partager le lien"),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text("Fermer"),
+          ),
         ],
       ),
     );
