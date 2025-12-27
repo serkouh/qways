@@ -5,6 +5,7 @@ import 'package:qways/constant/apiservice.dart';
 import 'package:qways/theme/theme.dart';
 import 'package:qways/localization/localization_const.dart';
 import 'package:http/http.dart' as http;
+import 'package:qways/services/quiz_service.dart';
 
 class QuizDashboard extends StatefulWidget {
   const QuizDashboard({super.key});
@@ -234,11 +235,49 @@ class _QuizDashboardState extends State<QuizDashboard> {
               children: [
                 Text(quiz.type ?? "", style: bold14Grey),
                 GestureDetector(
-                  onTap: () async {
-                    try {
-                      // ------------------------------
-                      // 1️⃣ CREATE ROOM
-                      // ------------------------------
+                    onTap: () async {
+                      try {
+                        // 1️⃣ CHECK FOR ACTIVE GAME (RESUME)
+                        final activeGame = await QuizService.getCurrentGame();
+                        if (activeGame != null) {
+                          final bool? resume = await showDialog<bool>(
+                            context: context,
+                            builder: (ctx) => AlertDialog(
+                              title: const Text("Déjà en cours"),
+                              content: const Text(
+                                  "Vous avez déjà créé une salle. Voulez-vous continuer ou recommencer ?"),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(ctx, false),
+                                  child: const Text("Recommencer"),
+                                ),
+                                TextButton(
+                                  onPressed: () => Navigator.pop(ctx, true),
+                                  child: const Text("Continuer"),
+                                ),
+                              ],
+                            ),
+                          );
+
+                          if (resume == true) {
+                            Navigator.pushNamed(
+                              context,
+                              '/joinGame',
+                              arguments: {
+                                "room_uuid": activeGame['room_uuid'],
+                                "current_step":
+                                    int.tryParse(activeGame['current_step'].toString()) ?? 1,
+                                "score":
+                                    int.tryParse(activeGame['score'].toString()) ?? 0,
+                              },
+                            );
+                            return;
+                          }
+                        }
+
+                        // ------------------------------
+                        // 2️⃣ CREATE ROOM (OR RESTART)
+                        // ------------------------------
                       final createResponse = await ApiService.post(
                         endpoint: "create_geo_quiz_room",
                         body: {

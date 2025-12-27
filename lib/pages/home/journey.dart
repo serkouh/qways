@@ -41,6 +41,15 @@ class _GeoQuizJourneyState extends State<GeoQuizJourney> {
 
     // The navigator may pass either a geo_quiz_id (numeric) or a room_uuid (string like GQR_...)
     roomUuid = args["room_uuid"]?.toString();
+    
+    // Check for Resume arguments
+    if (args.containsKey("current_step")) {
+      final int stepVal = int.tryParse(args["current_step"].toString()) ?? 1;
+      currentStep = (stepVal > 0) ? stepVal - 1 : 0; // Convert 1-based to 0-based
+    }
+    if (args.containsKey("score")) {
+       score = int.tryParse(args["score"].toString()) ?? 0;
+    }
 
     print("📥 Received navigation arg (room_uuid or geo_quiz_id): $roomUuid");
 
@@ -280,7 +289,12 @@ class _GeoQuizJourneyState extends State<GeoQuizJourney> {
     _penaltyTimer = Timer.periodic(const Duration(seconds: 1), (t) {
       if (penaltyRemainingSeconds <= 1) {
         t.cancel();
-        setState(() => penaltyRemainingSeconds = 0);
+        setState(() {
+          penaltyRemainingSeconds = 0;
+          // Return to map screen when penalty is over
+          showQuestion = false; 
+          qrVerifiedForThisQuestion = false;
+        });
       } else {
         setState(() => penaltyRemainingSeconds -= 1);
       }

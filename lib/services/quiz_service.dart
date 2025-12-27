@@ -128,4 +128,19 @@ class QuizService {
     }
     return [];
   }
+
+  // Get all active rooms (Public Explorer)
+  static Future<List<dynamic>> getAllLiveRooms() async {
+    final res = await ApiService.post(
+      endpoint: "get_all_live_rooms",
+      body: {}, // No filter needed for all
+      withAuth: true,
+    );
+    
+    final data = ApiService.decodeResponse(res);
+    if (data['data'] != null && data['data'] is List) {
+      return data['data'];
+    }
+    return [];
+  }
 }
