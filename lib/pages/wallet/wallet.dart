@@ -8,14 +8,14 @@ import 'package:qways/services/quiz_service.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 
-class RoomLibraryScreen extends StatefulWidget {
-  const RoomLibraryScreen({super.key});
+class RoomsListScreen extends StatefulWidget {
+  const RoomsListScreen({super.key});
 
   @override
-  State<RoomLibraryScreen> createState() => _RoomLibraryScreenState();
+  State<RoomsListScreen> createState() => _RoomsListScreenState();
 }
 
-class _RoomLibraryScreenState extends State<RoomLibraryScreen>
+class _RoomsListScreenState extends State<RoomsListScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
