@@ -6,17 +6,17 @@ import 'package:qways/pages/chatting/chat.dart';
 import 'package:qways/theme/theme.dart';
 import 'package:qways/services/quiz_service.dart';
 
-class RoomLibraryScreen extends StatefulWidget {
-  const RoomLibraryScreen({super.key});
+class RoomsListScreen extends StatefulWidget {
+  const RoomsListScreen({super.key});
 
   @override
-  State<RoomLibraryScreen> createState() => _RoomLibraryScreenState();
+  State<RoomsListScreen> createState() => _RoomsListScreenState();
 }
 
-class _RoomLibraryScreenState extends State<RoomLibraryScreen>
+class _RoomsListScreenState extends State<RoomsListScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  
+
   // Lists
   List publicRooms = [];
   List myRooms = [];
@@ -102,8 +102,8 @@ class _RoomLibraryScreenState extends State<RoomLibraryScreen>
         backgroundColor: primaryColor,
         onPressed: () {
           Navigator.pushNamed(context, '/CreateRoom').then((_) {
-             fetchPublicRooms();
-             fetchMyRooms();
+            fetchPublicRooms();
+            fetchMyRooms();
           });
         },
         child: const Icon(Icons.add, color: whiteColor),
@@ -113,16 +113,19 @@ class _RoomLibraryScreenState extends State<RoomLibraryScreen>
 
   Widget _buildRoomList(List rooms, bool loading, {required bool isPublic}) {
     if (loading) return const Center(child: CircularProgressIndicator());
-    
+
     if (rooms.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.meeting_room_outlined, size: 64, color: Colors.grey.shade400),
+            Icon(Icons.meeting_room_outlined,
+                size: 64, color: Colors.grey.shade400),
             const SizedBox(height: 12),
             Text(
-              isPublic ? "Aucune salle publique" : "Vous n'avez rejoint aucune salle",
+              isPublic
+                  ? "Aucune salle publique"
+                  : "Vous n'avez rejoint aucune salle",
               style: semibold16Grey,
             ),
           ],
@@ -132,8 +135,10 @@ class _RoomLibraryScreenState extends State<RoomLibraryScreen>
 
     return RefreshIndicator(
       onRefresh: () async {
-        if (isPublic) await fetchPublicRooms();
-        else await fetchMyRooms();
+        if (isPublic)
+          await fetchPublicRooms();
+        else
+          await fetchMyRooms();
       },
       child: ListView.separated(
         padding: const EdgeInsets.all(16),
@@ -149,8 +154,10 @@ class _RoomLibraryScreenState extends State<RoomLibraryScreen>
 
   Widget _buildRoomCard(dynamic room, bool isPublic) {
     final String name = room['room_name'] ?? "Unknown Room";
-    final int participants = int.tryParse(room['current_participants']?.toString() ?? "0") ?? 0;
-    final int maxP = int.tryParse(room['max_participants']?.toString() ?? "0") ?? 0;
+    final int participants =
+        int.tryParse(room['current_participants']?.toString() ?? "0") ?? 0;
+    final int maxP =
+        int.tryParse(room['max_participants']?.toString() ?? "0") ?? 0;
     final bool isPrivate = (room['room_type'] == 'private');
     final String uuid = room['room_uuid'] ?? "";
 
@@ -160,7 +167,10 @@ class _RoomLibraryScreenState extends State<RoomLibraryScreen>
         color: whiteColor,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4))
+          BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4))
         ],
       ),
       child: Row(
@@ -195,9 +205,9 @@ class _RoomLibraryScreenState extends State<RoomLibraryScreen>
           ),
           // Actions
           if (isPublic)
-             _buildJoinButton(uuid)
-          else 
-             _buildEnterButton(room), // For "My Rooms" we enter directly
+            _buildJoinButton(uuid)
+          else
+            _buildEnterButton(room), // For "My Rooms" we enter directly
         ],
       ),
     );
@@ -216,20 +226,21 @@ class _RoomLibraryScreenState extends State<RoomLibraryScreen>
   }
 
   Widget _buildEnterButton(dynamic room) {
-     final uuid = room['room_uuid'];
-     
-     return ElevatedButton(
+    final uuid = room['room_uuid'];
+
+    return ElevatedButton(
       onPressed: () {
-         Navigator.pushNamed(
-            context,
-            '/joinGame',
-            arguments: {
-              "room_uuid": uuid,
-              // Pass defaults, journey will check API if not present or handle empty
-              "current_step": int.tryParse(room['current_step']?.toString() ?? "1"),
-              "score": int.tryParse(room['score']?.toString() ?? "0"),
-            },
-         );
+        Navigator.pushNamed(
+          context,
+          '/joinGame',
+          arguments: {
+            "room_uuid": uuid,
+            // Pass defaults, journey will check API if not present or handle empty
+            "current_step":
+                int.tryParse(room['current_step']?.toString() ?? "1"),
+            "score": int.tryParse(room['score']?.toString() ?? "0"),
+          },
+        );
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.green, // Different color for "Enter"
@@ -245,16 +256,17 @@ class _RoomLibraryScreenState extends State<RoomLibraryScreen>
     try {
       final res = await QuizService.joinRoom(uuid);
       if (res['error'] == false) {
-         ScaffoldMessenger.of(context).showSnackBar(
-           const SnackBar(content: Text("Rejoint avec succès! Checking My Rooms...")),
-         );
-         // Refresh Lists
-         _tabController.animateTo(1); // Switch to My Rooms
-         fetchMyRooms();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text("Rejoint avec succès! Checking My Rooms...")),
+        );
+        // Refresh Lists
+        _tabController.animateTo(1); // Switch to My Rooms
+        fetchMyRooms();
       } else {
-         ScaffoldMessenger.of(context).showSnackBar(
-           SnackBar(content: Text(res['message'] ?? "Erreur")),
-         );
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(res['message'] ?? "Erreur")),
+        );
       }
     } catch (e) {
       print("Join Error: $e");
