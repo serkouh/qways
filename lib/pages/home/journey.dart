@@ -392,6 +392,154 @@ class _GeoQuizJourneyState extends State<GeoQuizJourney> {
   }
 
   // ------------------------------------------
+  // ************** UI SCREENS ***************
+  // ------------------------------------------
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 400),
+      child: showCongrats
+          ? _buildCongratsScreen()
+          : showQuestion && !qrVerifiedForThisQuestion
+              ? _buildQrScanForQuestion()
+              : showQuestion && qrVerifiedForThisQuestion
+                  ? _buildQuestionScreen()
+                  : _buildMapScreen(),
+    );
+  }
+
+  // ------------------------------------------------
+  // 🔳 QR SCREEN — MUST SCAN BEFORE SEEING QUESTION
+  // ------------------------------------------------
+
+  Widget _buildQrScanForQuestion() {
+    return Scaffold(
+      backgroundColor: whiteColor,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.qr_code_scanner, size: 120, color: primaryColor),
+            const SizedBox(height: 20),
+            const Text(
+              "Scan the QR code to unlock the question",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 30),
+            ElevatedButton(
+              onPressed: () async {
+                // TODO: Replace with real QR scan
+                print("📷 Simulating QR Scan SUCCESS");
+                setState(() {
+                  qrVerifiedForThisQuestion = true;
+                });
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: primaryColor,
+                padding:
+                    const EdgeInsets.symmetric(vertical: 14, horizontal: 40),
+              ),
+              child: const Text(
+                "Scan QR",
+                style: TextStyle(color: whiteColor),
+              ),
+            ),
+            const SizedBox(height: 20),
+            TextButton(
+              onPressed: () => setState(() => showQuestion = false),
+              child: const Text("Back to map"),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ------------------------------------------
+  // MAP SCREEN
+  // ------------------------------------------
+
+  Widget _buildMapScreen() {
+    final LatLng userLatLng = userPosition == null
+        ? const LatLng(48.8566, 2.3522)
+        : LatLng(userPosition!.latitude, userPosition!.longitude);
+
+    final Set<Marker> markers = {};
+    if (nextQuestionLocation != null) {
+      markers.add(Marker(
+        markerId: const MarkerId("next"),
+        position: nextQuestionLocation!,
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+      ));
+    }
+
+    if (userPosition != null) {
+      markers.add(Marker(
+        markerId: const MarkerId("user"),
+        position: userLatLng,
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+      ));
+    }
+
+    final Set<Circle> circles = {
+      Circle(
+        circleId: const CircleId("range"),
+        center: userLatLng,
+        radius: rangeRadius,
+        fillColor: primaryColor.withOpacity(0.15),
+        strokeColor: primaryColor,
+        strokeWidth: 2,
+      ),
+    };
+
+    return Scaffold(
+      backgroundColor: whiteColor,
+      body: Stack(
+        children: [
+          GoogleMap(
+            initialCameraPosition: CameraPosition(target: userLatLng, zoom: 16),
+            onMapCreated: (controller) => _mapController = controller,
+            myLocationEnabled: true,
+            myLocationButtonEnabled: false,
+            markers: markers,
+            circles: circles,
+            zoomControlsEnabled: false,
+          ),
+
+          ///
+          /// Floating Button: Answer Question
+          ///
+          Positioned(
+            bottom: 100,
+            left: 20,
+            right: 20,
+            child: ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  showQuestion = true;
+                  qrVerifiedForThisQuestion = false; // RESET
+                });
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: (inRange && nextQuestionLocation != null)
+                    ? primaryColor
+                    : greyColor,
+                padding: const EdgeInsets.all(16),
+              ),
+              child: const Text(
+                "Answer Question",
+                style:
+                    TextStyle(color: whiteColor, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ------------------------------------------
   // QUESTION SCREEN
   // ------------------------------------------
 
