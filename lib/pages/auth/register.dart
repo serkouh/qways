@@ -113,22 +113,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
           await ApiService.post(endpoint: 'user_signup', body: body);
       final data = ApiService.decodeResponse(response);
 
-      if (response.statusCode == 200 && data["data"]?["api_token"] != null) {
+      // Check if we got a token, regardless of 'error' flag/status code sometimes
+      final responseData = data["data"];
+      
+      if (responseData != null && responseData["api_token"] != null) {
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setString("api_token", data["data"]["api_token"]);
+        final token = responseData["api_token"].toString();
+        await prefs.setString("api_token", token);
 
         // ✅ Save user credentials
         await prefs.setString("user_name", nameController.text.trim());
         await prefs.setString("user_email", emailController.text.trim());
         await prefs.setString("user_password", passwordController.text.trim());
+        
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Inscription réussie 🎉')),
         );
 
         Navigator.pushNamed(context, '/bottombar');
       } else {
-        print(data.toString());
-        _showError(context, data.toString() ?? "Erreur lors de l'inscription");
+        final msg = data["message"] ?? "Erreur lors de l'inscription";
+        print("Register Error: $data");
+        _showError(context, ApiService.getApiMessage(data) ?? msg.toString());
       }
     } on FirebaseAuthException catch (e) {
       _showError(context, e.message ?? "Erreur Firebase");

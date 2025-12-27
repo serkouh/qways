@@ -228,11 +228,34 @@ class _GamesListScreenState extends State<GamesListScreen> {
           child: const Icon(Icons.public, color: Colors.orange),
         ),
         title: Text(quiz.title, style: bold16BlackText),
-        subtitle: Text(
-          quiz.description.isNotEmpty ? quiz.description : "No description",
-          style: semibold14Grey,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (quiz.locationCity.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 4, bottom: 2),
+                child: Row(
+                  children: [
+                    const Icon(Icons.location_on, size: 14, color: primaryColor),
+                    const SizedBox(width: 4),
+                    Text(
+                      "${quiz.locationCity}, ${quiz.locationCountry}",
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: primaryColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            Text(
+              quiz.description.isNotEmpty ? quiz.description : "No description",
+              style: semibold14Grey,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
         ),
         trailing: ElevatedButton(
           onPressed: () => _startQuiz(quiz),

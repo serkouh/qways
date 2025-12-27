@@ -82,14 +82,24 @@ class GeoQuiz {
   final int id;
   final String title;
   final String description;
+  final String locationCity;
+  final String locationCountry;
 
-  GeoQuiz({required this.id, required this.title, required this.description});
+  GeoQuiz({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.locationCity,
+    required this.locationCountry,
+  });
 
   factory GeoQuiz.fromJson(Map<String, dynamic> json) {
     return GeoQuiz(
       id: int.parse(json['id'].toString()),
       title: json['title'] ?? '',
       description: json['description'] ?? '',
+      locationCity: json['location_city'] ?? '',
+      locationCountry: json['location_country'] ?? '',
     );
   }
 }
