@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
+import 'dart:ui'; // 👈 Added import
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
@@ -651,7 +652,7 @@ class _GeoQuizJourneyState extends State<GeoQuizJourney> {
               child: Container(
                 color: Colors.white.withOpacity(0.85), // Semi-transparent white
                 child: BackdropFilter(
-                  filter: android.ui.ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                  filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
