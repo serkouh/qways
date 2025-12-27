@@ -115,7 +115,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       // Check if we got a token, regardless of 'error' flag/status code sometimes
       final responseData = data["data"];
-      
+
       if (responseData != null && responseData["api_token"] != null) {
         final prefs = await SharedPreferences.getInstance();
         final token = responseData["api_token"].toString();
@@ -125,7 +125,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         await prefs.setString("user_name", nameController.text.trim());
         await prefs.setString("user_email", emailController.text.trim());
         await prefs.setString("user_password", passwordController.text.trim());
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Inscription réussie 🎉')),
         );
@@ -134,7 +134,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       } else {
         final msg = data["message"] ?? "Erreur lors de l'inscription";
         print("Register Error: $data");
-        _showError(context, ApiService.getApiMessage(data) ?? msg.toString());
+        _showError(context, getApiMessage(data) ?? msg.toString());
       }
     } on FirebaseAuthException catch (e) {
       _showError(context, e.message ?? "Erreur Firebase");
