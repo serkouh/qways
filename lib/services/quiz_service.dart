@@ -133,7 +133,7 @@ class QuizService {
   static Future<List<dynamic>> getAllLiveRooms() async {
     final res = await ApiService.post(
       endpoint: "get_all_live_rooms",
-      body: {}, // No filter needed for all
+      body: {"include_private": 1}, // Show private rooms too
       withAuth: true,
     );
     

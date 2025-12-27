@@ -213,6 +213,8 @@ class _RoomsListScreenState extends State<RoomsListScreen>
                children: [
                  _buildShareButton(uuid, name),
                  const SizedBox(width: 8),
+                 _buildChatButton(room), // Add Chat Button
+                 const SizedBox(width: 8),
                  _buildEnterButton(room),
                ],
              ),
@@ -226,6 +228,35 @@ class _RoomsListScreenState extends State<RoomsListScreen>
       onPressed: () => _showShareDialog(uuid, name),
       icon: const Icon(Icons.share, color: primaryColor),
       tooltip: "Partager",
+    );
+  }
+
+  Widget _buildChatButton(dynamic room) {
+    return IconButton(
+      onPressed: () {
+        final String name = room['room_name'] ?? "Unknown Room";
+        final String avatar = (room['host_profile'] != null && room['host_profile'].isNotEmpty)
+             ? room['host_profile'].toString()
+             : "https://i.pravatar.cc/150?img=12";
+             
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ConversationDetailScreen(
+              chat: Chat(
+                id: 1, // Dummy ID as Chat Screen likely resolves by UUID
+                user1Id: 0,
+                user2Id: 0,
+                name: name,
+                roomUUID: room['room_uuid'],
+                image: avatar,
+              ),
+            ),
+          ),
+        );
+      },
+      icon: const Icon(Icons.chat_bubble_outline, color: primaryColor),
+      tooltip: "Chat",
     );
   }
 
