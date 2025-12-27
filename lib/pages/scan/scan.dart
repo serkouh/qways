@@ -20,25 +20,39 @@ class ScanScreen extends StatefulWidget {
 class _ScanScreenState extends State<ScanScreen> {
   final TextEditingController codeCtrl = TextEditingController();
 
-  Future<void> handleJoinRoom(String fullCode) async {
+  Future<void> handleJoinRoom(String inputCode) async {
     try {
-      if (!fullCode.contains(".")) {
-        showError("Invalid code format.\nExpected: ROOMID.QUIZID");
+      String roomUuid = "";
+      String? quizId;
+
+      // 1. Check if it's a URL (Deep Link)
+      if (inputCode.startsWith("http") || inputCode.startsWith("qways")) {
+        try {
+          final uri = Uri.parse(inputCode);
+          roomUuid = uri.queryParameters['room'] ?? "";
+        } catch (_) {}
+      } 
+      // 2. Check Legacy Format (ROOM.QUIZ)
+      else if (inputCode.contains(".")) {
+        final parts = inputCode.split(".");
+        if (parts.length >= 2) {
+          roomUuid = parts[0];
+          quizId = parts[1];
+        } else {
+           roomUuid = inputCode;
+        }
+      } 
+      // 3. Assume Raw UUID
+      else {
+        roomUuid = inputCode;
+      }
+
+      if (roomUuid.isEmpty) {
+        showError("Invalid Code. Could not find Room UUID.");
         return;
       }
 
-      final parts = fullCode.split(".");
-      if (parts.length != 2) {
-        showError("Invalid code format.\nExample: ABC123.5");
-        return;
-      }
-
-      final roomUuid = parts[0];
-      final quizId = parts[1];
-
-      print("🔍 Extracted:");
-      print("• Room UUID = $roomUuid");
-      print("• Geo Quiz ID = $quizId");
+      print("🔍 Extracted: Room=$roomUuid, Quiz=${quizId ?? 'Unknown'}");
 
       // ------------------------------------------------
       // JOIN ROOM API
@@ -60,9 +74,14 @@ class _ScanScreenState extends State<ScanScreen> {
 
       final joinData = jsonDecode(joinResponse.body);
 
-      if (joinData["data"] == null) {
-        showError(getApiMessage(joinResponse.body));
-        return;
+      if (joinData["data"] == null && joinData["error"] == true) {
+         // Check if already joined
+         if (joinData['message'].toString().toLowerCase().contains("already")) {
+             // Continue to join
+         } else {
+            showError(getApiMessage(joinResponse.body));
+            return;
+         }
       }
 
       showSuccess("Successfully joined room!");
@@ -74,11 +93,11 @@ class _ScanScreenState extends State<ScanScreen> {
         '/joinGame',
         arguments: {
           "room_uuid": roomUuid,
-          "quiz_id": quizId,
+          "quiz_id": quizId, // Can be null, Journey screen handles it
         },
       );
     } catch (e) {
-      showError("Failed to join room. Try again.");
+      showError("Failed to join room. Try again. error: $e");
     }
   }
 

@@ -10,6 +10,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:page_transition/page_transition.dart';
 import 'localization/localization.dart';
 import 'pages/screens.dart';
+import 'package:qways/pages/scan/scanner.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -262,6 +263,12 @@ class _MyAppState extends State<MyApp> {
         return PageTransition(
           child: const ScanScreen(),
           type: PageTransitionType.rightToLeft,
+          settings: settings,
+        );
+      case '/qrScanner':
+        return PageTransition(
+          child: const QRScannerScreen(), // From scanner.dart
+          type: PageTransitionType.fade,
           settings: settings,
         );
       case '/securityDeposit':

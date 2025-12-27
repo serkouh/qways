@@ -29,10 +29,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _fetchProfileData() async {
     try {
-      setState(() {
-        _isLoading = true;
-        _hasError = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = true;
+          _hasError = false;
+        });
+      }
 
       final prefs = await SharedPreferences.getInstance();
       final name = prefs.getString("user_name") ?? "User";
@@ -52,278 +54,337 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        setState(() {
-          _profileStats = data;
-          _isLoading = false;
-        });
+        if (mounted) {
+          setState(() {
+            _profileStats = data;
+            _isLoading = false;
+          });
+        }
       } else {
-        setState(() {
-          _hasError = true;
-        });
+        if (mounted) {
+          setState(() {
+            _hasError = true;
+            _isLoading = false;
+          });
+        }
       }
     } catch (e) {
       print("⚠️ Error fetching profile: $e");
-      setState(() {
-        _hasError = true;
-      });
+      if (mounted) {
+        setState(() {
+          _hasError = true;
+          _isLoading = false;
+        });
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: whiteColor,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        centerTitle: true,
-        foregroundColor: black2FColor,
-        title: Text(
-          getTranslation(context, 'profile.profile'),
-          style: bold20BlackText,
-        ),
-        elevation: 0,
-        backgroundColor: whiteColor,
-        systemOverlayStyle: const SystemUiOverlayStyle(
-          statusBarIconBrightness: Brightness.light,
-        ),
-      ),
+      backgroundColor: f4Color, // Light grey background
       body: _isLoading
           ? const Center(child: CircularProgressIndicator(color: primaryColor))
           : _hasError
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.error, color: redColor, size: 50),
-                      const SizedBox(height: 10),
-                      const Text("Failed to load profile data"),
-                      ElevatedButton(
-                        onPressed: _fetchProfileData,
-                        child: const Text("Retry"),
-                      ),
-                    ],
-                  ),
-                )
-              : ListView(
-                  padding: const EdgeInsets.only(bottom: fixPadding * 9.0),
+              ? _buildErrorView()
+              : CustomScrollView(
                   physics: const BouncingScrollPhysics(),
-                  children: [
-                    userprofileAndEdit(),
-                    rideDetails(),
-                    heightSpace,
-                    heightSpace,
-                    menuSection(),
+                  slivers: [
+                    SliverAppBar(
+                      expandedHeight: 220.0,
+                      floating: false,
+                      pinned: true,
+                      backgroundColor: primaryColor,
+                      automaticallyImplyLeading: false,
+                      flexibleSpace: FlexibleSpaceBar(
+                        background: _buildHeader(),
+                      ),
+                      systemOverlayStyle: SystemUiOverlayStyle.light,
+                    ),
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.all(fixPadding * 2.0),
+                        child: Column(
+                          children: [
+                            _buildStatsGrid(),
+                            heightSpace,
+                            heightSpace,
+                            _buildMenuSection(),
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
     );
   }
 
-  // 📊 Profile stats section
-  rideDetails() {
-    if (_profileStats == null) return const SizedBox();
-
-    return Container(
-      color: f4Color,
-      padding: const EdgeInsets.symmetric(
-          vertical: fixPadding * 1.5, horizontal: fixPadding),
-      child: Row(
+  Widget _buildErrorView() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          rideDetailWidget(
-            "assets/profile/bicycle.png",
-            getTranslation(context, 'profile.ride_taken'),
-            "${_profileStats?['total_quizzes_played'] ?? 0}",
-          ),
-          verticalDivider(),
-          rideDetailWidget(
-            "assets/profile/location-current.png",
-            getTranslation(context, 'profile.distance'),
-            "${(_profileStats?['total_distance_km'] ?? 0).toString()} km",
-          ),
-          verticalDivider(),
-          rideDetailWidget(
-            "assets/profile/calories.png",
-            getTranslation(context, 'profile.accuracy'),
-            "${(_profileStats?['accuracy_percentage'] ?? 0).toString()}%",
+          Icon(Icons.error_outline, color: Colors.red.shade300, size: 60),
+          heightSpace,
+          const Text("Could not load profile", style: bold18BlackText),
+          heightSpace,
+          ElevatedButton(
+            onPressed: _fetchProfileData,
+            style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
+            child: const Text("Retry", style: bold16White),
           ),
         ],
       ),
     );
   }
 
-  userprofileAndEdit() {
-    final name = _userInfo?["name"] ?? "Guest";
+  Widget _buildHeader() {
+    final name = _userInfo?["name"] ?? "User";
     final email = _userInfo?["email"] ?? "";
     final profileImg = _userInfo?["profile_img"];
 
     return Container(
-      padding: const EdgeInsets.only(
-          left: fixPadding * 2.0,
-          right: fixPadding * 2.0,
-          bottom: fixPadding * 2.0,
-          top: fixPadding / 2),
-      width: double.maxFinite,
-      color: whiteColor,
-      child: Row(
-        children: [
-          Container(
-            height: 55,
-            width: 55,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: whiteColor,
-              border: Border.all(color: whiteColor, width: 2),
-              boxShadow: [
-                BoxShadow(
-                  color: blackColor.withOpacity(0.25),
-                  blurRadius: 6,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [primaryColor, Color(0xFF6A9BF5)], // Adjust gradient
+        ),
+      ),
+      child: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Stack(
+              children: [
+                Container(
+                  height: 90,
+                  width: 90,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white, width: 3),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 10,
+                        offset: const Offset(0, 5),
+                      )
+                    ],
+                    image: DecorationImage(
+                      image: profileImg != null && profileImg.isNotEmpty
+                          ? NetworkImage(profileImg)
+                          : const AssetImage("assets/home/userImage.png")
+                              as ImageProvider,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.pushNamed(context, '/editProfile')
+                          .then((_) => _fetchProfileData());
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(LineIcons.edit,
+                          size: 18, color: primaryColor),
+                    ),
+                  ),
                 )
               ],
-              image: DecorationImage(
-                image: profileImg != null && profileImg.isNotEmpty
-                    ? NetworkImage(profileImg)
-                    : const AssetImage("assets/home/userImage.png")
-                        as ImageProvider,
-                fit: BoxFit.cover,
-              ),
             ),
-          ),
-          widthSpace,
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(name, style: bold16BlackText),
-                Text(email, style: semibold14Grey),
-              ],
-            ),
-          ),
-          IconButton(
-            onPressed: () {
-              Navigator.pushNamed(context, '/editProfile');
-            },
-            icon: const Icon(LineIcons.edit, color: black2FColor),
-          ),
-        ],
-      ),
-    );
-  }
-
-  menuSection() {
-    return Container(
-      color: f4Color,
-      child: Column(
-        children: [
-          height5Space,
-          listTileWidget(Icons.directions_bike,
-              getTranslation(context, 'profile.ride_history'), () {
-            Navigator.pushNamed(context, '/ridehistory');
-          }),
-          listTileWidget(CupertinoIcons.person_3,
-              getTranslation(context, 'profile.refer_earn'), () {
-            Navigator.pushNamed(context, '/referAndEarn');
-          }),
-          listTileWidget(
-              CupertinoIcons.globe, getTranslation(context, 'profile.language'),
-              () {
-            Navigator.pushNamed(context, '/language');
-          }),
-          listTileWidget(CupertinoIcons.gear_alt,
-              getTranslation(context, 'profile.app_settings'), () {
-            Navigator.pushNamed(context, '/appSettings');
-          }),
-          listTileWidget(CupertinoIcons.chat_bubble_2,
-              getTranslation(context, 'profile.FAQs'), () {
-            Navigator.pushNamed(context, '/FAQs');
-          }),
-          listTileWidget(Icons.privacy_tip_outlined,
-              getTranslation(context, 'profile.privacy_policy'), () {
-            Navigator.pushNamed(context, '/privacyPolicy');
-          }),
-          listTileWidget(Icons.list_alt,
-              getTranslation(context, 'profile.terms_condition'), () {
-            Navigator.pushNamed(context, '/termsAndCondition');
-          }),
-          listTileWidget(Icons.help_outline,
-              getTranslation(context, 'profile.help_support'), () {
-            Navigator.pushNamed(context, '/help');
-          }),
-          logoutTile(),
-          height5Space,
-        ],
-      ),
-    );
-  }
-
-  listTileWidget(IconData icon, String title, Function() onTap) {
-    return ListTile(
-      onTap: onTap,
-      contentPadding: const EdgeInsets.symmetric(horizontal: fixPadding * 2.0),
-      leading: Container(
-        height: 30,
-        width: 30,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: const Color(0xFFFCFCFC),
-          boxShadow: [
-            BoxShadow(
-              color: shadowColor.withOpacity(0.1),
-              blurRadius: 12,
-              offset: const Offset(0, 6),
-            ),
+            heightSpace,
+            Text(name, style: bold20White),
+            const SizedBox(height: 4),
+            Text(email, style: medium14White.copyWith(color: Colors.white70)),
           ],
         ),
-        child: Icon(icon, color: primaryColor, size: 20),
       ),
-      minLeadingWidth: 0,
-      title: Text(title, style: bold16BlackText),
-      trailing:
-          const Icon(Icons.arrow_forward_ios, color: black2FColor, size: 18),
     );
   }
 
-  rideDetailWidget(image, title, text) {
-    return Expanded(
-      child: Column(
+  Widget _buildStatsGrid() {
+    if (_profileStats == null) return const SizedBox();
+
+    return Container(
+      padding: const EdgeInsets.all(fixPadding * 1.5),
+      decoration: BoxDecoration(
+        color: whiteColor,
+        borderRadius: BorderRadius.circular(15.0),
+        boxShadow: [
+          BoxShadow(
+            color: shadowColor.withOpacity(0.1),
+            blurRadius: 12,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Image.asset(image, height: 35),
-          height5Space,
-          Text(title, style: bold16Primary, overflow: TextOverflow.ellipsis),
-          heightBox(3),
-          Text(text, style: bold16BlackText, overflow: TextOverflow.ellipsis),
+          _buildStatItem(
+            LineIcons.trophy,
+            "${_profileStats?['data']?['total_quizzes_played'] ?? _profileStats?['total_quizzes_played'] ?? 0}",
+            "Quizzes",
+            Colors.orange,
+          ),
+          Container(height: 40, width: 1, color: greyColor.withOpacity(0.3)),
+          _buildStatItem(
+            LineIcons.road,
+            "${_profileStats?['data']?['total_distance_km'] ?? _profileStats?['total_distance_km'] ?? 0}",
+            "KM",
+            Colors.blue,
+          ),
+          Container(height: 40, width: 1, color: greyColor.withOpacity(0.3)),
+          _buildStatItem(
+            LineIcons.bullseye,
+            "${_profileStats?['data']?['accuracy_percentage'] ?? _profileStats?['accuracy_percentage'] ?? 0}%",
+            "Accuracy",
+            Colors.green,
+          ),
         ],
       ),
     );
   }
 
-  verticalDivider() {
+  Widget _buildStatItem(
+      IconData icon, String value, String label, Color color) {
+    return Column(
+      children: [
+        Icon(icon, color: color, size: 28),
+        const SizedBox(height: 5),
+        Text(value, style: bold18BlackText),
+        Text(label, style: semibold12Grey),
+      ],
+    );
+  }
+
+  Widget _buildMenuSection() {
+    return Column(
+      children: [
+        _buildMenuCard([
+          _buildMenuItem(Icons.history, "Quiz History", '/ridehistory'),
+          _buildMenuItem(
+              CupertinoIcons.person_3,
+              getTranslation(context, 'profile.refer_earn'),
+              '/referAndEarn'),
+        ]),
+        heightSpace,
+        _buildMenuCard([
+          _buildMenuItem(
+              CupertinoIcons.globe,
+              getTranslation(context, 'profile.language'),
+              '/language'),
+          _buildMenuItem(
+              CupertinoIcons.gear_alt,
+              getTranslation(context, 'profile.app_settings'),
+              '/appSettings'),
+        ]),
+        heightSpace,
+        _buildMenuCard([
+          _buildMenuItem(Icons.privacy_tip_outlined,
+              getTranslation(context, 'profile.privacy_policy'), '/privacyPolicy'),
+          _buildMenuItem(Icons.list_alt,
+              getTranslation(context, 'profile.terms_condition'), '/termsAndCondition'),
+          _buildMenuItem(
+              Icons.help_outline,
+              getTranslation(context, 'profile.help_support'),
+              '/help'),
+        ]),
+        heightSpace,
+        _buildLogoutButton(),
+      ],
+    );
+  }
+
+  Widget _buildMenuCard(List<Widget> children) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: fixPadding),
-      height: 80,
-      width: 1,
-      color: greyB4Color,
+      decoration: BoxDecoration(
+        color: whiteColor,
+        borderRadius: BorderRadius.circular(15.0),
+        boxShadow: [
+          BoxShadow(
+            color: shadowColor.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        children: children,
+      ),
     );
   }
 
-  logoutTile() {
-    return ListTile(
-      onTap: () => logoutDialog(),
-      contentPadding: const EdgeInsets.symmetric(horizontal: fixPadding * 2.0),
-      leading: const Icon(Icons.logout, color: redColor),
-      title: Text(getTranslation(context, 'profile.logout'), style: bold16Red),
+  Widget _buildMenuItem(IconData icon, String title, String route) {
+    return Column(
+      children: [
+        ListTile(
+          onTap: () {
+            Navigator.pushNamed(context, route);
+          },
+          leading: Container(
+            height: 35,
+            width: 35,
+            decoration: BoxDecoration(
+              color: primaryColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, color: primaryColor, size: 20),
+          ),
+          title: Text(title, style: bold16BlackText),
+          trailing: const Icon(Icons.arrow_forward_ios,
+              size: 16, color: greyColor),
+        ),
+        if (title != getTranslation(context, 'profile.help_support') && // Last items in blocks
+            title != getTranslation(context, 'profile.refer_earn') &&
+            title != getTranslation(context, 'profile.app_settings'))
+          const Divider(height: 1, indent: 60),
+      ],
     );
   }
 
-  logoutDialog() {
-    return showDialog(
+  Widget _buildLogoutButton() {
+    return InkWell(
+      onTap: _showLogoutDialog,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 15),
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: Colors.red.shade50,
+          borderRadius: BorderRadius.circular(15.0),
+          border: Border.all(color: Colors.red.shade100),
+        ),
+        child: const Center(
+          child: Text(
+            "Logout",
+            style: TextStyle(
+                color: Colors.red, fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showLogoutDialog() {
+    showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         title: const Text("Logout"),
-        content: const Text("Do you really want to log out?"),
+        content: const Text("Are you sure you want to log out?"),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text("Cancel")),
-          TextButton(
+              child: const Text("Cancel", style: TextStyle(color: greyColor))),
+          ElevatedButton(
             onPressed: () async {
               final prefs = await SharedPreferences.getInstance();
               await prefs.clear();
@@ -332,7 +393,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     context, '/login', (route) => false);
               }
             },
-            child: const Text("Logout", style: TextStyle(color: redColor)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8)),
+            ),
+            child: const Text("Logout", style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
