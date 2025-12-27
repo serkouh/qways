@@ -325,7 +325,6 @@ class _GeoQuizJourneyState extends State<GeoQuizJourney> {
         final data = decoded["data"] ?? {};
         final bool isCorrect =
             data["is_correct"] == true || data["is_correct"] == 1;
-        final String correctAnswer = (data["correct_answer"] ?? "").toString();
 
         if (isCorrect) {
           setState(() =>
@@ -342,11 +341,20 @@ class _GeoQuizJourneyState extends State<GeoQuizJourney> {
         if (completed) {
           setState(() => showCongrats = true);
         } else {
+          final int penalty = (data["time_penalty_seconds"] ?? 0) as int;
+          
           setState(() {
             currentStep = serverCurrentStep - 1; // server uses 1-based
             selectedAnswer = null;
-            showQuestion = false;
-            qrVerifiedForThisQuestion = false;
+            
+            // STAY on screen if penalty active, otherwise return to map
+            if (penalty > 0) {
+               // We stay here. The UI will show the new question (if desired) 
+               // and the penalty overlay.
+            } else {
+               showQuestion = false;
+               qrVerifiedForThisQuestion = false;
+            }
           });
           _setNextStepLocation();
         }
@@ -383,154 +391,6 @@ class _GeoQuizJourneyState extends State<GeoQuizJourney> {
     }
   }
 
-  // -----------------------------------------
-  // ************** UI SCREENS ***************
-  // -----------------------------------------
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 400),
-      child: showCongrats
-          ? _buildCongratsScreen()
-          : showQuestion && !qrVerifiedForThisQuestion
-              ? _buildQrScanForQuestion()
-              : showQuestion && qrVerifiedForThisQuestion
-                  ? _buildQuestionScreen()
-                  : _buildMapScreen(),
-    );
-  }
-
-  // ------------------------------------------------
-  // 🔳 QR SCREEN — MUST SCAN BEFORE SEEING QUESTION
-  // ------------------------------------------------
-
-  Widget _buildQrScanForQuestion() {
-    return Scaffold(
-      backgroundColor: whiteColor,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.qr_code_scanner, size: 120, color: primaryColor),
-            const SizedBox(height: 20),
-            const Text(
-              "Scan the QR code to unlock the question",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: () async {
-                // TODO: Replace with real QR scan
-                print("📷 Simulating QR Scan SUCCESS");
-                setState(() {
-                  qrVerifiedForThisQuestion = true;
-                });
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: primaryColor,
-                padding:
-                    const EdgeInsets.symmetric(vertical: 14, horizontal: 40),
-              ),
-              child: const Text(
-                "Scan QR",
-                style: TextStyle(color: whiteColor),
-              ),
-            ),
-            const SizedBox(height: 20),
-            TextButton(
-              onPressed: () => setState(() => showQuestion = false),
-              child: const Text("Back to map"),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  // ------------------------------------------
-  // MAP SCREEN
-  // ------------------------------------------
-
-  Widget _buildMapScreen() {
-    final LatLng userLatLng = userPosition == null
-        ? const LatLng(48.8566, 2.3522)
-        : LatLng(userPosition!.latitude, userPosition!.longitude);
-
-    final Set<Marker> markers = {};
-    if (nextQuestionLocation != null) {
-      markers.add(Marker(
-        markerId: const MarkerId("next"),
-        position: nextQuestionLocation!,
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
-      ));
-    }
-
-    if (userPosition != null) {
-      markers.add(Marker(
-        markerId: const MarkerId("user"),
-        position: userLatLng,
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
-      ));
-    }
-
-    final Set<Circle> circles = {
-      Circle(
-        circleId: const CircleId("range"),
-        center: userLatLng,
-        radius: rangeRadius,
-        fillColor: primaryColor.withOpacity(0.15),
-        strokeColor: primaryColor,
-        strokeWidth: 2,
-      ),
-    };
-
-    return Scaffold(
-      backgroundColor: whiteColor,
-      body: Stack(
-        children: [
-          GoogleMap(
-            initialCameraPosition: CameraPosition(target: userLatLng, zoom: 16),
-            onMapCreated: (controller) => _mapController = controller,
-            myLocationEnabled: true,
-            myLocationButtonEnabled: false,
-            markers: markers,
-            circles: circles,
-            zoomControlsEnabled: false,
-          ),
-
-          ///
-          /// Floating Button: Answer Question
-          ///
-          Positioned(
-            bottom: 100,
-            left: 20,
-            right: 20,
-            child: ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  showQuestion = true;
-                  qrVerifiedForThisQuestion = false; // RESET
-                });
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: (inRange && nextQuestionLocation != null)
-                    ? primaryColor
-                    : greyColor,
-                padding: const EdgeInsets.all(16),
-              ),
-              child: const Text(
-                "Answer Question",
-                style:
-                    TextStyle(color: whiteColor, fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   // ------------------------------------------
   // QUESTION SCREEN
   // ------------------------------------------
@@ -543,113 +403,143 @@ class _GeoQuizJourneyState extends State<GeoQuizJourney> {
     }
 
     final step = steps[currentStep];
-
     final answers = [step.option1, step.option2, step.option3];
+    final bool isPenaltyActive = penaltyRemainingSeconds > 0;
 
     return Scaffold(
       backgroundColor: whiteColor,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Question ${currentStep + 1}/${steps.length}",
-                  style: semibold14Grey),
-              const SizedBox(height: 10),
-              Text(step.question,
-                  textAlign: TextAlign.center, style: bold20BlackText),
-              const SizedBox(height: 20),
-              if (penaltyRemainingSeconds > 0)
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                  margin: const EdgeInsets.only(bottom: 12),
-                  decoration: BoxDecoration(
-                    color: Colors.red.shade50,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.red.shade200),
+      body: Stack(
+        children: [
+          // Main Content
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("Question ${currentStep + 1}/${steps.length}",
+                      style: semibold14Grey),
+                  const SizedBox(height: 10),
+                  Text(step.question,
+                      textAlign: TextAlign.center, style: bold20BlackText),
+                  const SizedBox(height: 30),
+                  
+                  // Answers Key
+                  ...List.generate(answers.length, (i) {
+                    final isSelected = selectedAnswer == i;
+                    // Disable clicks if penalty is active or submitting
+                    final disabled = isPenaltyActive || submitting; 
+                    
+                    return GestureDetector(
+                      onTap: disabled
+                          ? null
+                          : () => setState(() => selectedAnswer = i),
+                      child: Opacity(
+                        opacity: disabled ? 0.3 : 1.0, // Fade out answers slightly
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(vertical: 8),
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? primaryColor.withOpacity(0.1)
+                                : const Color(0xFFF6F6F6),
+                            border: Border.all(
+                              color: isSelected ? primaryColor : Colors.transparent,
+                              width: 2,
+                            ),
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: Text(
+                            answers[i],
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: isSelected ? primaryColor : blackColor,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: (selectedAnswer == null ||
+                            isPenaltyActive ||
+                            submitting)
+                        ? null
+                        : () => _submitAnswer(step, selectedAnswer!),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: primaryColor,
+                      padding:
+                          const EdgeInsets.symmetric(vertical: 14, horizontal: 40),
+                    ),
+                    child: submitting
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                        : const Text(
+                            "Submit",
+                            style: TextStyle(
+                              color: whiteColor,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                   ),
-                  child: Row(
+                ],
+              ),
+            ),
+          ),
+
+          // Penalty Overlay
+          if (isPenaltyActive)
+            Positioned.fill(
+              child: Container(
+                color: Colors.white.withOpacity(0.85), // Semi-transparent white
+                child: BackdropFilter(
+                  filter: android.ui.ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                  child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.timer, color: Colors.red),
-                      const SizedBox(width: 8),
+                      const Icon(Icons.lock_clock, size: 80, color: Colors.red),
+                      const SizedBox(height: 20),
                       Text(
-                        "Penalty active — wait ${penaltyRemainingSeconds}s",
-                        style: const TextStyle(color: Colors.red),
+                        "IN PENALTY",
+                         style: bold22BlackText.copyWith(color: Colors.red),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        "Wait before answering the next question",
+                        style: semibold16Grey,
+                      ),
+                      const SizedBox(height: 30),
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.red, width: 4),
+                        ),
+                        child: Text(
+                          "$penaltyRemainingSeconds",
+                          style: const TextStyle(
+                            fontSize: 40, 
+                            fontWeight: FontWeight.bold, 
+                            color: Colors.red
+                          ),
+                        ),
                       ),
                     ],
                   ),
                 ),
-              ...List.generate(answers.length, (i) {
-                final isSelected = selectedAnswer == i;
-                final disabled = penaltyRemainingSeconds > 0 || submitting;
-                return GestureDetector(
-                  onTap: disabled
-                      ? null
-                      : () => setState(() => selectedAnswer = i),
-                  child: Opacity(
-                    opacity: disabled ? 0.6 : 1.0,
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(vertical: 8),
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? primaryColor.withOpacity(0.1)
-                            : const Color(0xFFF6F6F6),
-                        border: Border.all(
-                          color: isSelected ? primaryColor : Colors.transparent,
-                          width: 2,
-                        ),
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: Text(
-                        answers[i],
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: isSelected ? primaryColor : blackColor,
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              }),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: (selectedAnswer == null ||
-                        penaltyRemainingSeconds > 0 ||
-                        submitting)
-                    ? null
-                    : () => _submitAnswer(step, selectedAnswer!),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: primaryColor,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 14, horizontal: 40),
-                ),
-                child: submitting
-                    ? const SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
-                      )
-                    : const Text(
-                        "Submit",
-                        style: TextStyle(
-                          color: whiteColor,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
               ),
-            ],
-          ),
-        ),
+            ),
+        ],
       ),
     );
   }
