@@ -55,6 +55,7 @@ dependencies:
   qr_flutter: ^4.1.0        # For generating QR codes
   app_links: ^6.3.2         # Modern replacement for deep linking
   share_plus: ^10.0.0        # For sharing content
+  image_picker: ^1.1.2      # For picking images
 
 dev_dependencies:
   flutter_test:

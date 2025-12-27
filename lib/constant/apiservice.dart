@@ -64,6 +64,41 @@ class ApiService {
     return res;
   }
 
+  // ✅ POST Multipart request (for file uploads)
+  static Future<http.Response> postMultipart({
+    required String endpoint,
+    required String filePath,
+    Map<String, String>? fields,
+    bool withAuth = false,
+  }) async {
+    final uri = Uri.parse(_buildUrl(endpoint));
+    final request = http.MultipartRequest('POST', uri);
+
+    // Add Headers
+    final headers = await _headers(withAuth: withAuth);
+    request.headers.addAll(headers);
+    // Remove Content-Type as MultipartRequest sets it automatically
+    request.headers.remove('Content-Type');
+
+    // Add Fields
+    if (fields != null) {
+      request.fields.addAll(fields);
+    }
+
+    // Add File
+    if (filePath.isNotEmpty) {
+      final file = await http.MultipartFile.fromPath('image', filePath);
+      request.files.add(file);
+    }
+
+    print("📡 Uploading to $endpoint...");
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+    
+    _log(endpoint, response.statusCode);
+    return response;
+  }
+
   // ✅ DELETE request
   static Future<http.Response> delete({
     required String endpoint,
