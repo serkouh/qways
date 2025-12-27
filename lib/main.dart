@@ -47,6 +47,8 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  @override
+  void didChangeDependencies() {
     getLocale().then((locale) {
       setState(() {
         _locale = locale;
